@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Progression — Development Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* core neutrals */
+    --ink:#16302f; --paper:#fcfcfc; --muted:#6b8280;
+    --rule:#cfe0dc; --card:#f7fbfa;
+    /* teal system — from the tracker */
+    --shell:#12363a; --seg:#4f9a9b; --seg-lit:#6fb8b6; --seg-dim:#3d7d80;
+    --tint-1:rgba(111,184,182,.28); --tint-2:rgba(79,154,155,.14);
+    /* single warm accent, used sparingly */
+    --accent:#b6452c; --accent-soft:#d98b5f;
+    /* deep contrast for thesis */
+    --thesis:#12363a; --thesis-soft:rgba(79,154,155,.16);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:'Merriweather',serif;font-weight:300;
+    padding:44px 24px 90px;min-height:100vh;
+    background-image:radial-gradient(circle at 12% 6%, rgba(79,154,155,.07), transparent 45%),
+                     radial-gradient(circle at 88% 94%, rgba(18,54,58,.05), transparent 45%);
+  }
+  .wrap{max-width:1000px;margin:0 auto;}
+
+  /* MASTHEAD */
+  .masthead{text-align:center;margin-bottom:8px;}
+  .masthead .kicker{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--seg-dim);font-weight:500;}
+  .masthead h1{font-family:'Fraunces',serif;font-size:46px;font-weight:600;letter-spacing:-1px;line-height:1.05;margin:10px 0 6px;}
+  .masthead .sub{font-size:13.5px;color:var(--muted);max-width:560px;margin:0 auto;line-height:1.6;}
+  .divider{width:60px;height:2px;background:var(--seg);margin:28px auto 40px;}
+
+  /* SUMMARY PANEL */
+  .summary{
+    background:linear-gradient(135deg, rgba(111,184,182,.28) 0%, rgba(79,154,155,.16) 55%, rgba(111,184,182,.10) 100%);
+    border:3px solid var(--shell);
+    border-radius:10px;
+    padding:22px 32px 26px;margin-bottom:30px;
+    box-shadow:0 10px 30px rgba(18,54,58,.16);
+    display:flex;flex-direction:column;align-items:flex-start;
+  }
+  .summary .s-tile{
+    flex:0 0 auto;width:50px;height:50px;border-radius:12px;
+    background:var(--shell);
+    display:flex;align-items:center;justify-content:center;font-size:23px;
+    box-shadow:0 3px 10px rgba(18,54,58,.22);
+  }
+  .summary .s-phase{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:5px;}
+  .summary h2{font-family:'Fraunces',serif;font-size:26px;font-weight:600;letter-spacing:-.4px;line-height:1.14;margin-bottom:4px;}
+  .summary .s-era{font-size:12.5px;color:#5c6f6c;font-style:italic;margin-bottom:12px;}
+  .summary p.s-lede{font-size:14px;line-height:1.75;max-width:680px;}
+  .summary .s-body{flex:1;min-width:0;}
+  .summary .s-inner{display:flex;gap:20px;align-items:flex-start;width:100%;}
+  .mini-track{
+    display:inline-flex;gap:1px;align-items:center;
+    background:var(--shell);border-radius:999px;padding:2px 3px;
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.35);
+    margin-bottom:14px;
+  }
+  .mini-track .mt{
+    width:5px;height:8px;background:var(--seg-dim);
+    clip-path:polygon(22% 0,100% 0,78% 100%,0 100%);
+    transition:background .25s ease;
+  }
+  .mini-track .mt:first-child{clip-path:polygon(0 0,100% 0,78% 100%,0 100%);border-radius:999px 0 0 999px;}
+  .mini-track .mt:last-child{clip-path:polygon(22% 0,100% 0,100% 100%,0 100%);border-radius:0 999px 999px 0;}
+  .mini-track .mt.on{background:var(--seg-lit);}
+  .mini-track .mt.slot{background:#2a5457;}
+  @media(max-width:640px){
+    .summary{padding:22px 20px;}
+    .summary .s-inner{flex-direction:column;gap:14px;}
+  }
+
+  /* BAR */
+  .bar-scroll{overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+  .shell{
+    background:var(--shell);border-radius:999px;padding:9px;
+    box-shadow:0 12px 30px rgba(18,54,58,.28), inset 0 2px 6px rgba(0,0,0,.35);
+    overflow:hidden;height:88px;min-width:760px;
+  }
+  .segs{display:flex;height:100%;gap:4px;}
+  .seg{
+    flex:1;position:relative;cursor:pointer;background:var(--seg-dim);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+    transition:background .28s ease;color:rgba(255,255,255,.62);
+    clip-path:polygon(14% 0, 100% 0, 86% 100%, 0% 100%);
+  }
+  .seg:first-child{clip-path:polygon(0 0,100% 0,86% 100%,0 100%);border-radius:999px 0 0 999px;}
+  .seg:last-child{clip-path:polygon(14% 0,100% 0,100% 100%,0 100%);border-radius:0 999px 999px 0;}
+  .seg:hover{background:var(--seg);color:#fff;}
+  .seg.on{background:var(--seg-lit);color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55);}
+  .seg.open-slot{background:#2a5457;color:rgba(255,255,255,.4);}
+  .seg.open-slot:hover{background:#376a6d;}
+  .s-ico{font-size:19px;line-height:1;}
+  .s-num{font-family:'Fraunces',serif;font-weight:700;font-size:11px;letter-spacing:.08em;opacity:.85;}
+  .hint{text-align:center;font-size:12px;color:var(--muted);margin-top:12px;font-style:italic;}
+
+  /* DETAIL */
+  .detail{
+    margin-top:30px;background:var(--card);border:1px solid var(--rule);
+    border-top:5px solid var(--seg-lit);border-radius:12px;padding:34px 34px;
+    box-shadow:0 12px 40px rgba(18,54,58,.07);
+    animation:rise .45s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes slideFromRight{
+    0%{opacity:0;transform:translateX(38px);}
+    100%{opacity:1;transform:translateX(0);}
+  }
+  @keyframes slideFromLeft{
+    0%{opacity:0;transform:translateX(-38px);}
+    100%{opacity:1;transform:translateX(0);}
+  }
+  .summary.go-right{animation:slideFromRight .42s cubic-bezier(.22,1,.36,1) both;}
+  .summary.go-left{animation:slideFromLeft .42s cubic-bezier(.22,1,.36,1) both;}
+  .detail-head{border-bottom:1px solid var(--rule);padding-bottom:20px;margin-bottom:28px;display:flex;gap:20px;align-items:flex-start;}
+  .head-ico{
+    flex:0 0 auto;width:54px;height:54px;border-radius:12px;background:var(--seg-lit);
+    display:flex;align-items:center;justify-content:center;font-size:25px;
+  }
+  .d-phase{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:6px;}
+  .detail-head h2{font-family:'Fraunces',serif;font-size:29px;font-weight:600;letter-spacing:-.5px;line-height:1.12;}
+  .d-era{margin-top:7px;font-size:13px;color:var(--muted);font-style:italic;}
+  .detail-lede{font-size:14.5px;line-height:1.75;margin-bottom:32px;max-width:670px;}
+
+  /* BENTO GRID — mixed horizontal + vertical */
+  .block-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    grid-auto-rows:minmax(10px,auto);
+    grid-auto-flow:row dense;
+    gap:14px;
+    align-items:start;
+  }
+  .block{
+    background:#fff;border:1px solid var(--rule);border-radius:10px;
+    padding:20px 22px;box-shadow:0 2px 10px rgba(18,54,58,.05);
+    transition:box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+    height:100%;
+  }
+  .block:hover{box-shadow:0 8px 22px rgba(18,54,58,.11);transform:translateY(-2px);border-color:var(--seg-lit);}
+
+  /* span classes — width */
+  .block.w-2{grid-column:span 2;}
+  .block.w-3{grid-column:span 3;}
+  .block.w-4{grid-column:span 4;}
+  .block.w-6{grid-column:span 6;}
+  /* tall tiles: narrow column, content runs vertically */
+  .block.tall{grid-row:span 2;}
+
+  /* lesson tile — the anchor, full width */
+  .block.lesson{
+    background:linear-gradient(135deg,var(--tint-1) 0%,var(--tint-2) 100%);
+    border:2px solid var(--shell);
+  }
+  .block.lesson h3{color:var(--shell);border-bottom-color:rgba(18,54,58,.25);}
+  .block.lesson li{font-size:13.2px;}
+  .block.lesson li::before{background:var(--shell);}
+
+  /* narrow/vertical tiles get tighter type */
+  .block.w-2 li{font-size:12.2px;line-height:1.55;}
+  .block.w-2 h3{font-size:9.5px;letter-spacing:.16em;}
+
+  /* Observations & Experience split layout */
+  .oe-split{display:grid;grid-template-columns:1fr 1px 1fr;gap:18px;}
+  .oe-split .oe-col h4{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--seg-dim);margin-bottom:10px;font-weight:600;}
+  .oe-split .oe-line{background:var(--rule);}
+  .oe-split ul{list-style:none;}
+  .oe-split li{font-size:12.8px;line-height:1.6;padding:6px 0 6px 16px;position:relative;}
+  .oe-split li::before{content:'';position:absolute;left:0;top:13px;width:5px;height:5px;border-radius:50%;background:var(--seg);}
+  @media(max-width:640px){
+    .oe-split{grid-template-columns:1fr;}
+    .oe-split .oe-line{display:none;height:1px;}
+  }
+
+  @media(max-width:900px){
+    .block-grid{grid-template-columns:repeat(4,1fr);}
+    .block.w-2{grid-column:span 2;}
+    .block.w-3{grid-column:span 2;}
+    .block.w-4{grid-column:span 4;}
+    .block.w-6{grid-column:span 4;}
+    .block.tall{grid-row:span 1;}
+  }
+  @media(max-width:640px){
+    .block-grid{grid-template-columns:1fr;gap:12px;}
+    .block.w-2,.block.w-3,.block.w-4,.block.w-6{grid-column:span 1;}
+    .block.tall{grid-row:span 1;}
+    .detail{padding:24px 18px;}
+    body{padding:28px 14px 60px;}
+    .masthead h1{font-size:34px;}
+    .detail-head{flex-direction:column;gap:14px;}
+  }
+  .block h3{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--seg-dim);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--rule);}
+  .block ul{list-style:none;}
+  .block li{font-size:12.8px;line-height:1.6;padding:6px 0 6px 18px;position:relative;}
+  .block li::before{content:'';position:absolute;left:0;top:13px;width:5px;height:5px;border-radius:50%;background:var(--seg);}
+  .block a{color:var(--accent);text-decoration:underline;}
+
+  .component,.thesis,.questions{grid-column:1/-1;border-radius:10px;padding:24px 28px;}
+  .component{background:linear-gradient(135deg,rgba(217,139,95,.13) 0%,rgba(182,69,44,.06) 100%);border:1px solid rgba(182,69,44,.28);border-left:4px solid var(--accent);}
+  .c-tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px;}
+  .component h4{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--accent);line-height:1.3;margin-bottom:10px;}
+  .component p,.thesis p{font-size:12.8px;line-height:1.72;}
+  .thesis{background:var(--shell);border:2px solid var(--shell);color:#eaf4f2;}
+  .t-tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--seg-lit);font-weight:600;margin-bottom:10px;}
+  .thesis h4{font-family:'Fraunces',serif;font-size:21px;font-weight:600;color:#fff;line-height:1.3;margin-bottom:10px;}
+  .questions{background:rgba(79,154,155,.07);border:1px dashed var(--seg);}
+  .questions h3{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--seg-dim);margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--rule);}
+  .questions ul{list-style:none;}
+  .questions li{font-size:12.8px;line-height:1.65;padding:7px 0 7px 22px;position:relative;}
+  .questions li::before{content:'?';position:absolute;left:0;top:6px;font-family:'Fraunces',serif;font-weight:700;color:var(--seg-dim);font-size:15px;}
+  .placeholder-note{text-align:center;color:var(--muted);font-style:italic;font-size:15px;padding:24px 0;line-height:1.7;}
+  .footer{text-align:center;margin-top:56px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+  .footer::before{content:'';display:block;width:40px;height:2px;background:var(--seg);margin:0 auto 18px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <div class="kicker">Personal &amp; Professional Development</div>
+    <h1>The Progression</h1>
+    <p class="sub">Not a one-off course. An exponential arc — each phase built from the last. Click a phase to open it.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="bar-scroll">
+    <div class="shell"><div class="segs" id="segs"></div></div>
+  </div>
+  <p class="hint">click any phase</p>
+
+  <div class="detail" id="detail"></div>
+  <div class="footer">Living Document · Building Gradually · 2026</div>
+</div>
+
+<script>
+const phases = [
+  {
+    ico:"🌱", label:"Phase 01", title:"Curiosity, Skepticism &amp; Fear", era:"Where everyone actually starts",
+    lede:"The honest starting line. Before any fluency, there was the same mix everyone feels — curiosity pulling one way, skepticism and fear pulling the other. This phase exists so the arc starts where the reader is, not where I ended up.",
+    lessons:[
+      "Almost nobody starts curious and confident. The common starting position is ambivalence — interested and uneasy at the same time — and that is a normal place to begin, not a deficiency.",
+      "Fear that gets named loses most of its power. Fear that gets dismissed hardens into refusal.",
+      "The first step is rarely a tool decision. It is permission to be uncertain in public."
+    ],
+    comprised:["The emotional reality most people are actually in: intrigued but wary","Low-stakes, unserious contexts as the only place the guard comes down","Sitting in uncertainty without needing to resolve it immediately"],
+    built:["Nothing formal — early prompts driving a video-game storyline"],
+    observed:["The wariness is rational, not ignorant — it deserves a real answer","Play is where learning happens because nothing is at risk","Output quality tracked input quality even in a game, long before anyone had language for why","AI-augmented solutions work best when they start with a real problem — especially a stickier one, the kind that has resisted easy fixes and actually calls for a creative approach","The only thing that moves someone out of this phase is a real, lived \"win\" — big or small. Proof, not persuasion. The hype, the novelty, and the uncanny sense of a machine acting with some autonomy naturally raise everyone\'s guard, and no argument fully lowers it. Only a result does. That said, the win should be a launch point, not an end point — the moment fluency starts, not a box to check."],
+    resources:["No course, no framework — pure curiosity","The reason I can tell a skeptic honestly: I started where you are"],
+    work:["The willingness to sit in discomfort became the thing I could later offer other people"],
+    personal:["My entry point was a college football video game dynasty — silly, private, no stakes. That is precisely why it worked."]
+  },
+  {
+    ico:"🔧", label:"Phase 02", title:"Initial Applications", era:"Personal first",
+    lede:"The first real applications weren't at work — they were personal. That is where fluency actually gets built: on things you care about, where feedback is immediate and nobody is grading you. Professional use grows out of that, not the other way around.",
+    lessons:[
+      "Start where the stakes are yours. Depth of engagement comes from caring about the domain, not from professional obligation.",
+      "You cannot write a precise prompt about something you do not understand. Prompt quality is a readout of thinking quality — which is why personal expertise is the fastest on-ramp.",
+      "Most people's impression of AI is shallow because the shallow version is the only one they have been shown. One demonstration at real depth changes the assessment.",
+      "The instinct transfers. Whatever you learn wrestling with a personal problem is the same instinct you will bring to a work problem."
+    ],
+    comprised:["Sustained personal projects where the outcome genuinely mattered to the person doing them","Extended, context-rich threads rather than one-off queries","Only afterward: the same instincts applied to professional work"],
+    built:["Personal builds pushed hard because the outcome mattered","A per-project context habit — load the full picture before asking for anything","Early workflow automation once the instinct matured"],
+    observed:["Depth comes from caring about the domain, not from professional pressure","Continuity and accumulated context change the interaction entirely","Personal-first is the reliable on-ramp; work-first usually stalls"],
+    resources:["Self-directed exploration","No credential — practice earning its keep"],
+    work:["Personal fluency became the foundation the professional work stood on"],
+    personal:["Mine were a full training-program overhaul, a vetted supplement stack, a lower-leg rehab framework, and a dynasty fantasy football GM agent built from scratch. None of it was work. All of it was practice."],
+    components:[
+      {tag:"The Front-End Breakthrough", title:"\"Wait — I didn't know it could do this.\"",
+       body:"Not building. Not an app, not a repository, not yet. Just the realization that a working page could generate right there in the conversation — visuals and all — through prompting alone. A chore system came together almost by accident, something I never set out to design. That stumble is the hinge, and it is available to anyone: the moment you discover a capability you did not know was on the table, your sense of what is possible resets. Everything after it starts with \"if it can do this, I wonder if it can also…\""},
+      {tag:"Where the Thesis Comes From", title:"\"Oh — this is like writing my own little story.\"",
+       body:"Geopolitical what-if scenarios: conversations I could not have with other people because the subject knowledge simply was not there. Somewhere in those, the realization landed — this is like writing my own little story. The content was mine, the scenarios were mine, so what came back was shaped by what I brought. That is the whole thesis, felt before it was ever articulated. The general form: what you get out is downstream of what you bring, and the fastest way to feel that is to use it on something only you know well."}
+    ]
+  },
+  {
+    ico:"◻︎", label:"Phase 03", title:"Open Slot", era:"To be decided", placeholder:true, openSlot:true,
+    lede:"This slot is intentionally open. The front-end breakthrough moved into Phase 02 as a component; what belongs here is still being decided."
+  },
+  {
+    ico:"💡", label:"Phase 04", title:"The Unlocking of Ideas", era:"The \"I wonder\" moments",
+    lede:"The breakthrough was the stumble. This is what thinking does next. Once you have seen a capability exist, ideas stop dying at \"I could never make that.\" The constraint quietly shifts from capability to imagination — and that shift is available to anyone, well before any credential.",
+    lessons:[
+      "The real unlock is not a skill. It is a change in what you believe is worth attempting.",
+      "\"I wonder if it could also…\" is the single most productive sentence in this whole process. It marks the point where someone stops being a user and starts being a designer.",
+      "When capability stops being the ceiling, capacity becomes the ceiling — time, attention, and judgment about what is worth building.",
+      "Naming a concept is what makes it reusable. Unnamed insight stays personal; named insight can be taught."
+    ],
+    comprised:["A backlog of ideas that suddenly had a path to existing","Frameworks and named concepts starting to accumulate","The bottleneck moving from skill to imagination"],
+    built:["Capture infrastructure — a running inventory of ideas and principles","Named frameworks that made recurring patterns teachable"],
+    observed:["Capability was no longer the ceiling; capacity was","Ideas were flowing well before any credential validated them","Most people never reach this phase because they never had the first breakthrough"],
+    resources:["A living-document system for capture","Everything from the breakthrough moment, now compounding"],
+    work:["This is the phase a certificate gets mistaken for the start of"],
+    personal:["For me this produced the Idea Inventory, the Running List of Principles, and named frameworks like the Jarvis Ceiling — all before any formal course."]
+  },
+  {
+    ico:"🎓", label:"Phase 05", title:"UMD Course Completion", era:"The visible marker",
+    lede:"The first externally legible marker of a practice already well underway. Worth being precise about what a credential is and is not: it confirms and translates existing practice into a form institutions can read. It rarely creates the practice.",
+    lessons:[
+      "Credentials are translation devices. They convert practice into something an organization can see, fund, and act on.",
+      "The visible marker is almost never the origin. Assuming otherwise causes organizations to misjudge where capability actually lives on their teams.",
+      "There are likely people in any organization who are further along than their credentials suggest — and the only way to find them is to ask about practice, not paper.",
+      "A credential can change how you are seen overnight. It changes what you can do far more slowly."
+    ],
+    comprised:["A formal certification in AI and career empowerment","The moment private practice became publicly legible","Recognition arriving well after the capability did"],
+    built:["Nothing new technically — this phase is recognition, not construction"],
+    observed:["A certification can reframe how leadership sees someone overnight","It mattered less for what it taught than for what it signaled","People assume the certificate is the start; the timeline exists to correct that"],
+    resources:["UMD AI &amp; Career Empowerment certificate"],
+    work:["Triggered the leadership attention that followed"],
+    personal:["Mine produced an unsolicited public shoutout in a cross-functional meeting — which is the only reason this document exists."]
+  },
+  {
+    ico:"👥", label:"Phase 06", title:"Professional Community", era:"Finding the people",
+    lede:"The turn from solo practice to shared space. Community is where isolated practice becomes a discipline — where you find peers, encounter research, and watch other people move at their own pace. It is also where most of the raw material for anything you build later comes from.",
+    lessons:[
+      "Practice alone plateaus. Community is what converts personal habit into transferable discipline.",
+      "The most persuasive thing to a hesitant colleague is not an expert — it is a peer who was recently in their position and moved. Social proof from someone adjacent beats authority from someone distant.",
+      "Nobody is where they say they are on the spectrum. Self-described skeptics are frequently much closer to the threshold than they claim, and self-described adopters are frequently shallower.",
+      "Cohorts lower the identity cost of engaging. Doing it alongside someone makes it a shared activity rather than a personal admission."
+    ],
+    comprised:["Participating in the wider professional discourse rather than working in isolation","A shared course taken alongside colleagues, at their own pace","An informal group chat that made the learning social"],
+    built:["A public presence — writing, commenting, engaging with a real voice","Relationships that functioned as an informal cohort"],
+    observed:["A self-described skeptic became an enrolled peer — not by persuasion but by proximity","A colleague already had the instinct; what she lacked was the language for it","Community surfaced the research that later became a working activity"],
+    resources:["Professional networks and discourse","A structured AI fluency course, taken socially"],
+    work:["A team quietly becoming a live culture-shift case study in real time"],
+    personal:["MaryKate and April taking the Anthropic AI Fluency course alongside me, with a Teams group chat around it — a live example happening right now, not a hypothetical."]
+  },
+  {
+    ico:"📣", label:"Phase 07", title:"The AI Fluency Push", era:"The outward turn", hasThesis:true,
+    lede:"Community gives you people and raw material. The push is what you do with it — turning understanding into artifacts and offering it to others on their own terms. This is where fluency stops being a personal asset and becomes an organizational one.",
+    lessons:[
+      "Personal relevance before tool introduction. Lead with the person's own problem, not the software's feature list — that sequence is what actually converts.",
+      "Resistance is rarely about comprehension. It is about identity and ritual: what using this says about who I am and how I work. Arguments aimed at understanding miss the actual obstacle.",
+      "Build the prompt from the human's own knowledge first. What they already know is the raw material; the tool is only the amplifier.",
+      "Advocacy requires fluency. Ask any facilitator why the current product works and they can genuinely make the case. With an AI-based product, that same authentic advocacy is impossible without fluency — the advocacy gap is the fluency gap.",
+      "Offer without attachment to the outcome. Pressure re-triggers the identity threat you are trying to defuse."
+    ],
+    comprised:["Turning research into working facilitation activities","Identity-preserving conversations with hesitant colleagues","Moving from \"I use this\" to \"here is how you might, your way\""],
+    built:["Seven-persona teacher case studies — an academic thesis run through an original analytical framework (<a href=\'https://mcroney531-ctrl.github.io/classcross/\' target=\'_blank\' rel=\'noopener\'>view the build</a>)","A standalone case for AI fluency (<a href=\'https://stunning-starlight-d7dd32.netlify.app/\' target=\'_blank\' rel=\'noopener\'>view the build</a>)","Westover\'s 3 Dimensions of Sustainable AI Transformation (<a href=\'https://stunning-starlight-d7dd32.netlify.app/westover\' target=\'_blank\' rel=\'noopener\'>view the build</a>)","A facilitation sequence that starts from the human\'s own expertise"],
+    observed:["A skeptic became a paying subscriber in under 72 hours after one personal demonstration","The non-shallow version is invisible to skeptics because nobody has shown it to them","Identity-preserving entry points — peer cohorts, external containers, deadlines — are the real lever"],
+    resources:["A tiers-of-use explainer, deployed at the right moment in a conversation","Case study documents and companion frameworks"],
+    work:["Fluency becoming an organizational asset rather than an individual one"],
+    personal:["I found the study in the community and built the activity in the push — that sequence is the whole model in miniature."],
+    thesisTag:"The Thesis of the Whole Thing",
+    thesisTitle:"Your outputs are a reflection of your thinking.",
+    thesisBody:"The ceiling rises with the evaluative capacity of the person directing it — the Jarvis Ceiling. This is why fluency cannot be delivered by a tool rollout: the tool is constant, the thinking is the variable. It is also why resistance is not a comprehension problem. It is an identity and ritual problem, and it cuts across technical and non-technical people alike. Threat literacy over tech fluency. Human first."
+  },
+  {
+    ico:"🧭", label:"Phase 08", title:"Now — Looking Ahead", era:"Where this is going",
+    lede:"Where it stands today, and what is on the horizon. A credential is one stop on a longer arc — which is the reason this is worth telling as a progression rather than a certificate. The same is true for any organization deciding how to approach this.",
+    lessons:[
+      "The gap between deploying a tool and integrating it is far wider than most estimates assume. Access is not adoption, and adoption is not integration.",
+      "A tick-a-box rollout is more dangerous than doing nothing. It produces the appearance of progress while quietly worsening the conditions for real adoption.",
+      "No platform closes the change-management gap on its own. The gap is human, so the intervention has to be human.",
+      "Regulatory timelines can be an opening rather than a threat — a non-defensive reason to start, with a date attached.",
+      "The people already doing this work inside an organization are usually invisible until someone asks the right question."
+    ],
+    comprised:["A live practice with real documents, frameworks, and case studies","Organizational AI adoption accelerating on a fixed timeline","EU AI Act Article 4 enforcement (Aug 2026) as a live, non-threatening hook"],
+    built:["This hub — a living document that keeps growing","A one-pager that elaborates whatever gets said in the room"],
+    observed:["The adoption-integration gap is closer to 88/12 than conventional estimates suggest","Appearance of progress is the most expensive failure mode","No platform closes the change-management gap on its own"],
+    resources:["Ongoing research and academic sourcing","Everything in the phases before this one"],
+    work:["Pressure from below meeting weight from above","A trajectory that now has organizational relevance"],
+    personal:["For me the immediate horizon is the Honcho conversation and a role that aligns closely with this arc."],
+    questions:["What does it take for an organization to find the people already doing this quietly?","How far does a fluency push actually scale — team, department, org?","What is the honest ceiling on identity-preserving entry points before someone has to choose?","How do you measure integration rather than adoption?","Does \"your outputs are a reflection of your thinking\" hold as the thesis, or does it evolve?"]
+  }
+];
+
+const segs=document.getElementById('segs');
+phases.forEach((p,i)=>{
+  const s=document.createElement('div');
+  s.className='seg'+(i===0?' on':'')+(p.openSlot?' open-slot':'');
+  s.innerHTML=`<span class="s-ico">${p.ico}</span><span class="s-num">${String(i+1).padStart(2,'0')}</span>`;
+  s.onclick=()=>select(i);
+  segs.appendChild(s);
+});
+
+function block(t,items,shape,cls){
+  if(!items||!items.length) return '';
+  const sh = shape || 'w-3';
+  const extra = cls ? ' '+cls : '';
+  return `<div class="block ${sh}${extra}"><h3>${t}</h3><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+}
+function oeBlock(experience,observation,shape){
+  if((!experience||!experience.length)&&(!observation||!observation.length)) return '';
+  const sh = shape || 'w-4 tall';
+  const col=(label,items)=>`<div class="oe-col"><h4>${label}</h4><ul>${(items||[]).map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+  return `<div class="block ${sh}"><h3>Observations &amp; Experience</h3>
+    <div class="oe-split">
+      ${col('What Happened',experience)}
+      <div class="oe-line"></div>
+      ${col('Takeaways',observation)}
+    </div>
+  </div>`;
+}
+function comps(p){
+  if(!p.components) return '';
+  return p.components.map(c=>`<div class="component"><div class="c-tag">${c.tag}</div><h4>${c.title}</h4><p>${c.body}</p></div>`).join('');
+}
+function thesis(p){
+  if(!p.hasThesis) return '';
+  return `<div class="thesis"><div class="t-tag">${p.thesisTag}</div><h4>${p.thesisTitle}</h4><p>${p.thesisBody}</p></div>`;
+}
+function quest(p){
+  if(!p.questions) return '';
+  return `<div class="questions"><h3>Questions</h3><ul>${p.questions.map(q=>`<li>${q}</li>`).join('')}</ul></div>`;
+}
+
+let prevIndex = 0;
+
+function select(i){
+  document.querySelectorAll('.seg').forEach((s,x)=>s.classList.toggle('on',x===i));
+  const p=phases[i];
+  const sum=document.getElementById('summary');
+  const d=document.getElementById('detail');
+
+  const miniTicks = phases.map((ph,x)=>
+    `<div class="mt${x===i?' on':''}${ph.openSlot?' slot':''}"></div>`
+  ).join('');
+
+  sum.innerHTML=`
+    <div class="mini-track">${miniTicks}</div>
+    <div class="s-inner">
+      <div class="s-tile">${p.ico}</div>
+      <div class="s-body">
+        <div class="s-phase">${p.label}</div>
+        <h2>${p.title}</h2>
+        <div class="s-era">${p.era}</div>
+        <p class="s-lede">${p.lede}</p>
+      </div>
+    </div>`;
+
+  // directional slide: forward = enters from right, backward = enters from left
+  const dir = i >= prevIndex ? 'go-right' : 'go-left';
+  sum.classList.remove('go-right','go-left');
+  void sum.offsetWidth;
+  sum.classList.add(dir);
+  prevIndex = i;
+
+  if(p.placeholder){
+    d.innerHTML = `<p class="placeholder-note">Nothing here yet — this slot is being held open.</p>`;
+  } else {
+    d.innerHTML = `
+      <div class="block-grid">
+        ${block('Entering This Phase:',p.personal,'w-6')}
+        ${oeBlock(p.comprised,p.observed)}
+        ${block('Courses &amp; Resources',p.resources,'w-2')}
+        ${block('Relevant Builds',p.built,'w-2')}
+        ${block('Lessons Learned','lessons' in p ? p.lessons : null,'w-6','lesson')}
+        ${comps(p)} ${thesis(p)} ${quest(p)}
+      </div>`;
+  }
+  d.style.animation='none'; void d.offsetWidth; d.style.animation='';
+}
+select(0);
+</script>
+</body>
+</html>
