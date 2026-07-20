@@ -470,8 +470,7 @@ function select(i){
       <div class="block-grid">
         ${enterBlock(p)}
         ${oeBlock(p.comprised,p.observed,null,p.oe)}
-        ${block('Courses &amp; Resources',p.resources,'w-2')}
-        ${block('Relevant Builds',p.built,'w-2')}
+        ${block('Relevant Builds',p.built,'w-2 tall')}
         ${block('Lessons Learned','lessons' in p ? p.lessons : null,'w-6','lesson')}
         ${comps(p)} ${thesis(p)} ${quest(p)}
       </div>`;
