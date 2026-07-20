@@ -189,11 +189,17 @@
     .block.tall{grid-row:span 1;}
   }
   @media(max-width:640px){
-    .block-grid{grid-template-columns:1fr;gap:12px;}
-    .block.w-2,.block.w-3,.block.w-4,.block.w-6{grid-column:span 1;}
-    .block.tall{grid-row:span 1;}
-    .detail{padding:24px 18px;}
-    body{padding:28px 14px 60px;}
+    /* keep a 2-column bento on phones so it reads like the desktop bands
+       (Entering full-width, O&E beside Relevant Builds, Lessons full-width) */
+    .block-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+    .block{padding:16px 14px;}
+    .block.w-2{grid-column:span 1;}
+    .block.w-3{grid-column:span 2;}
+    .block.w-4{grid-column:span 1;}
+    .block.w-6{grid-column:span 2;}
+    .block.tall{grid-row:span 2;}
+    .detail{padding:22px 14px;}
+    body{padding:28px 12px 60px;}
     .masthead h1{font-size:34px;}
     .detail-head{flex-direction:column;gap:14px;}
   }
