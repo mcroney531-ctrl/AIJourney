@@ -287,7 +287,10 @@ const phases = [
     observed:["A certification can reframe how leadership sees someone overnight","It mattered less for what it taught than for what it signaled","People assume the certificate is the start; the timeline exists to correct that"],
     resources:["UMD AI &amp; Career Empowerment certificate"],
     work:["Triggered the leadership attention that followed"],
-    personal:["Mine produced an unsolicited public shoutout in a cross-functional meeting — which is the only reason this document exists."]
+    personal:["Mine produced an unsolicited public shoutout in a cross-functional meeting — which is the only reason this document exists."],
+    enter:{
+      intro:"<strong>What pulled me toward the UMD course was its newness, the breadth of its module topics, and — above all — the career-empowerment angle.</strong> It took something abstract and made it tangible. I read it as \"here's how you can use this to help yourself in meaningful ways\" — a genuinely different pitch than the \"Google replacement\" and \"draft me an email\" uses that are usually the only ones on display."
+    }
   },
   {
     ico:"🔧", label:"Phase 03", title:"Initial Applications", era:"Personal first",
@@ -417,10 +420,10 @@ function oeBlock(experience,observation,shape){
 function enterBlock(p){
   if(p.enter){
     const e=p.enter;
-    const pts=e.points.map(pt=>`<li><span class="lead">${pt.lead}</span> ${pt.body}</li>`).join('');
+    const pts=(e.points||[]).map(pt=>`<li><span class="lead">${pt.lead}</span> ${pt.body}</li>`).join('');
     return `<div class="block w-6"><h3>Entering This Phase:</h3>
       <p class="enter-lede">${e.intro}</p>
-      <ul class="enter-list">${pts}</ul>
+      ${pts?`<ul class="enter-list">${pts}</ul>`:''}
       ${e.outro?`<p class="enter-close">${e.outro}</p>`:''}
     </div>`;
   }
