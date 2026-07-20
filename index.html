@@ -201,6 +201,13 @@
   .block li{font-size:12.8px;line-height:1.6;padding:6px 0 6px 18px;position:relative;}
   .block li::before{content:'';position:absolute;left:0;top:13px;width:5px;height:5px;border-radius:50%;background:var(--seg);}
   .block a{color:var(--accent);text-decoration:underline;}
+  /* narrative "Entering This Phase" variant — intro prose, labeled bullets, closing line */
+  .block .enter-lede{font-size:13.2px;line-height:1.72;margin-bottom:12px;}
+  .block .enter-lede strong{font-weight:700;color:var(--shell);}
+  .block .enter-close{font-size:13.2px;line-height:1.72;margin-top:14px;font-style:italic;}
+  .block .enter-list li{padding:7px 0 7px 18px;}
+  .block .enter-list li::before{top:14px;}
+  .block .enter-list .lead{font-weight:700;color:var(--shell);}
 
   .component,.thesis,.questions{grid-column:1/-1;border-radius:10px;padding:24px 28px;}
   .component{background:linear-gradient(135deg,rgba(217,139,95,.13) 0%,rgba(182,69,44,.06) 100%);border:1px solid rgba(182,69,44,.28);border-left:4px solid var(--accent);}
@@ -255,7 +262,17 @@ const phases = [
     observed:["The wariness is rational, not ignorant — it deserves a real answer","Play is where learning happens because nothing is at risk","Output quality tracked input quality even in a game, long before anyone had language for why","AI-augmented solutions work best when they start with a real problem — especially a stickier one, the kind that has resisted easy fixes and actually calls for a creative approach","The only thing that moves someone out of this phase is a real, lived \"win\" — big or small. Proof, not persuasion. The hype, the novelty, and the uncanny sense of a machine acting with some autonomy naturally raise everyone\'s guard, and no argument fully lowers it. Only a result does. That said, the win should be a launch point, not an end point — the moment fluency starts, not a box to check."],
     resources:["No course, no framework — pure curiosity","The reason I can tell a skeptic honestly: I started where you are"],
     work:["The willingness to sit in discomfort became the thing I could later offer other people"],
-    personal:["My entry point was a college football video game dynasty — silly, private, no stakes. That is precisely why it worked."]
+    personal:["My entry point was a college football video game dynasty — silly, private, no stakes. That is precisely why it worked."],
+    enter:{
+      intro:"<strong>When LLMs hit the mainstream around 2023, I paid them little mind.</strong> After years of tech hype — crypto, NFTs, and the rest — it was easy to file this under the same heading and move on. But it didn\'t fade the way those did. The noise only grew louder, and over time a few sentiments settled out of it:",
+      points:[
+        {lead:"The magic machine.", body:"AI was billed as the thing that knows almost everything and can do almost anything — and whatever it couldn\'t do yet, it would be able to do soon."},
+        {lead:"A threat to my livelihood.", body:"It felt like only a matter of time before AI could run a live session or do my job outright — my career suddenly on borrowed time."},
+        {lead:"The end of a shared reality.", body:"I was already alarmed by what social media had done to society; adding AI felt like it could be the breaking point. How is anyone supposed to tell what\'s real anymore? It was a serious problem before AI ever entered the picture."},
+        {lead:"The next great divider.", body:"Maybe I needed to learn a little, just to stay aware — the way a grandparent who never learned smartphones slowly gets cut off. Miss this piece, and you might not know how to interact with everyday tech later in life."}
+      ],
+      outro:"So I set out to learn."
+    }
   },
   {
     ico:"🔧", label:"Phase 02", title:"Initial Applications", era:"Personal first",
@@ -398,6 +415,18 @@ function oeBlock(experience,observation,shape){
     </div>
   </div>`;
 }
+function enterBlock(p){
+  if(p.enter){
+    const e=p.enter;
+    const pts=e.points.map(pt=>`<li><span class="lead">${pt.lead}</span> ${pt.body}</li>`).join('');
+    return `<div class="block w-6"><h3>Entering This Phase:</h3>
+      <p class="enter-lede">${e.intro}</p>
+      <ul class="enter-list">${pts}</ul>
+      ${e.outro?`<p class="enter-close">${e.outro}</p>`:''}
+    </div>`;
+  }
+  return block('Entering This Phase:',p.personal,'w-6');
+}
 function comps(p){
   if(!p.components) return '';
   return p.components.map(c=>`<div class="component"><div class="c-tag">${c.tag}</div><h4>${c.title}</h4><p>${c.body}</p></div>`).join('');
@@ -447,7 +476,7 @@ function select(i){
   } else {
     d.innerHTML = `
       <div class="block-grid">
-        ${block('Entering This Phase:',p.personal,'w-6')}
+        ${enterBlock(p)}
         ${oeBlock(p.comprised,p.observed)}
         ${block('Courses &amp; Resources',p.resources,'w-2')}
         ${block('Relevant Builds',p.built,'w-2')}
