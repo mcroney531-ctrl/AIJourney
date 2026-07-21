@@ -224,6 +224,7 @@
   .questions li{font-size:12.8px;line-height:1.65;padding:7px 0 7px 22px;position:relative;}
   .questions li::before{content:'?';position:absolute;left:0;top:6px;font-family:'Fraunces',serif;font-weight:700;color:var(--seg-dim);font-size:15px;}
   .placeholder-note{text-align:center;color:var(--muted);font-style:italic;font-size:15px;padding:24px 0;line-height:1.7;}
+  .pending{font-size:12.8px;color:var(--muted);font-style:italic;line-height:1.6;padding:4px 0;}
   .footer{text-align:center;margin-top:56px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
   .footer::before{content:'';display:block;width:40px;height:2px;background:var(--seg);margin:0 auto 18px;}
 </style>
@@ -351,6 +352,13 @@ const phases = [
   },
   {
     ico:"🧭", label:"Phase 06", title:"Now — Looking Ahead", era:"Where this is going",
+    sections:[
+      {title:"A Suite of Apps &amp; Solutions", shape:"w-6"},
+      {title:"New Workflows", shape:"w-3"},
+      {title:"Other Certifications", shape:"w-3"},
+      {title:"Keeping the Flame Lit", shape:"w-6", cls:"lesson"}
+    ],
+    questionsTitle:"Questions Moving Forward",
     lede:"Where it stands today, and what is on the horizon. A credential is one stop on a longer arc — which is the reason this is worth telling as a progression rather than a certificate. The same is true for any organization deciding how to approach this.",
     lessons:[
       "The gap between deploying a tool and integrating it is far wider than most estimates assume. Access is not adoption, and adoption is not integration.",
@@ -422,7 +430,15 @@ function thesis(p){
 }
 function quest(p){
   if(!p.questions) return '';
-  return `<div class="questions"><h3>Questions</h3><ul>${p.questions.map(q=>`<li>${q}</li>`).join('')}</ul></div>`;
+  return `<div class="questions"><h3>${p.questionsTitle||'Questions'}</h3><ul>${p.questions.map(q=>`<li>${q}</li>`).join('')}</ul></div>`;
+}
+function sectionBlock(s){
+  const sh=s.shape||'w-3';
+  const extra=s.cls?' '+s.cls:'';
+  const inner=(s.items&&s.items.length)
+    ? `<ul>${s.items.map(x=>`<li>${x}</li>`).join('')}</ul>`
+    : `<p class="pending">Content coming — this section is being built.</p>`;
+  return `<div class="block ${sh}${extra}"><h3>${s.title}</h3>${inner}</div>`;
 }
 
 let prevIndex = 0;
@@ -458,6 +474,12 @@ function select(i){
 
   if(p.placeholder){
     d.innerHTML = `<p class="placeholder-note">Nothing here yet — this slot is being held open.</p>`;
+  } else if(p.sections){
+    d.innerHTML = `
+      <div class="block-grid">
+        ${p.sections.map(sectionBlock).join('')}
+        ${quest(p)}
+      </div>`;
   } else {
     const hasBuilds = !!(p.built && p.built.length && !p.hideBuilds);
     d.innerHTML = `
