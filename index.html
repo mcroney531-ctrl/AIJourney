@@ -225,6 +225,11 @@
   .questions li::before{content:'?';position:absolute;left:0;top:6px;font-family:'Fraunces',serif;font-weight:700;color:var(--seg-dim);font-size:15px;}
   .placeholder-note{text-align:center;color:var(--muted);font-style:italic;font-size:15px;padding:24px 0;line-height:1.7;}
   .pending{font-size:12.8px;color:var(--muted);font-style:italic;line-height:1.6;padding:4px 0;}
+  .apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;margin-top:6px;}
+  .app-card{opacity:0;animation:appFade .45s cubic-bezier(.22,1,.36,1) forwards;}
+  .app-card img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:18px;border:1px solid var(--rule);box-shadow:0 6px 18px rgba(18,54,58,.16);}
+  @keyframes appFade{from{opacity:0;transform:translateY(10px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+  @media(max-width:640px){.apps-grid{grid-template-columns:repeat(2,1fr);gap:12px;}}
   .footer{text-align:center;margin-top:56px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
   .footer::before{content:'';display:block;width:40px;height:2px;background:var(--seg);margin:0 auto 18px;}
 </style>
@@ -353,7 +358,15 @@ const phases = [
   {
     ico:"🧭", label:"Phase 06", title:"Now — Looking Ahead", era:"Where this is going",
     sections:[
-      {title:"A Suite of Apps &amp; Solutions", shape:"w-6"},
+      {title:"A Suite of Apps &amp; Solutions", shape:"w-6", images:[
+        {src:"assets/apps/gitget.png", alt:"GitGet"},
+        {src:"assets/apps/quicksum.png", alt:"QuickSum"},
+        {src:"assets/apps/projdash.png", alt:"ProjDash"},
+        {src:"assets/apps/liftbuddy.png", alt:"LiftBuddy"},
+        {src:"assets/apps/foodlog.png", alt:"FoodLog"},
+        {src:"assets/apps/taskcal.png", alt:"TaskCal"},
+        {src:"assets/apps/commandgm.png", alt:"Command GM"}
+      ]},
       {title:"New Workflows", shape:"w-3"},
       {title:"Other Certifications", shape:"w-3"},
       {title:"Keeping the Flame Lit", shape:"w-6", cls:"lesson"}
@@ -435,9 +448,16 @@ function quest(p){
 function sectionBlock(s){
   const sh=s.shape||'w-3';
   const extra=s.cls?' '+s.cls:'';
-  const inner=(s.items&&s.items.length)
-    ? `<ul>${s.items.map(x=>`<li>${x}</li>`).join('')}</ul>`
-    : `<p class="pending">Content coming — this section is being built.</p>`;
+  let inner;
+  if(s.images&&s.images.length){
+    inner=`<div class="apps-grid">${s.images.map((im,i)=>
+      `<div class="app-card" style="animation-delay:${(i*0.10).toFixed(2)}s"><img src="${im.src}" alt="${im.alt||''}" loading="lazy"></div>`
+    ).join('')}</div>`;
+  } else if(s.items&&s.items.length){
+    inner=`<ul>${s.items.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+  } else {
+    inner=`<p class="pending">Content coming — this section is being built.</p>`;
+  }
   return `<div class="block ${sh}${extra}"><h3>${s.title}</h3>${inner}</div>`;
 }
 
