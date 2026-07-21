@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Progression — Development Hub</title>
+<title>The AI Arc — Development Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -198,6 +198,7 @@
     .detail-head{flex-direction:column;gap:14px;}
   }
   .block h3{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--seg-dim);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--rule);}
+  .block.oe > h3{font-size:14px;}
   .block ul{list-style:none;}
   .block li{font-size:12.8px;line-height:1.6;padding:6px 0 6px 18px;position:relative;}
   .block li::before{content:'';position:absolute;left:0;top:13px;width:5px;height:5px;border-radius:50%;background:var(--seg);}
@@ -265,7 +266,7 @@
 <div class="wrap">
   <div class="masthead">
     <div class="kicker">Personal &amp; Professional Development</div>
-    <h1>The Progression</h1>
+    <h1>The AI Arc</h1>
     <p class="sub">I thought courses would be what moved me forward. What actually made these insights last was the combination — knowledge, real experience, and the right human conditions — compounding across every phase.</p>
   </div>
   <div class="divider"></div>
@@ -456,7 +457,7 @@ function oeBlock(experience,observation,shape,opts){
   const leftLabel = o.left || 'What Happened';
   const rightLabel = o.right || 'Takeaways';
   const col=(label,items)=>`<div class="oe-col"><h4>${label}</h4><ul>${(items||[]).map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
-  return `<div class="block ${sh}"><h3>${title}</h3>
+  return `<div class="block oe ${sh}"><h3>${title}</h3>
     <div class="oe-split">
       ${col(leftLabel,experience)}
       <div class="oe-line"></div>
