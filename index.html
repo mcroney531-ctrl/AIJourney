@@ -238,11 +238,25 @@
   .cert-group h4{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--shell);font-weight:700;margin:14px 0 2px;}
   .cert-group h4:first-child{margin-top:0;}
   .cert-group .pending{color:#5c6f6c;padding-left:0;}
-  .apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;margin-top:6px;}
-  .app-card{opacity:0;animation:appFade .45s cubic-bezier(.22,1,.36,1) forwards;}
-  .app-card img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:18px;border:1px solid var(--rule);box-shadow:0 6px 18px rgba(18,54,58,.16);}
+  .apps-note{font-weight:700;color:var(--shell);font-size:13px;margin:2px 0 14px;}
+  .apps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:6px;}
+  .app-card{opacity:0;animation:appFade .45s cubic-bezier(.22,1,.36,1) forwards;cursor:pointer;}
+  .app-card img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:18px;border:1px solid var(--rule);box-shadow:0 6px 18px rgba(18,54,58,.16);transition:transform .2s ease, box-shadow .2s ease;}
+  .app-card:hover img{transform:translateY(-3px);box-shadow:0 12px 26px rgba(18,54,58,.24);}
   @keyframes appFade{from{opacity:0;transform:translateY(10px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
   @media(max-width:640px){.apps-grid{grid-template-columns:repeat(2,1fr);gap:12px;}}
+  /* app detail modal */
+  .app-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(10,26,28,.55);}
+  .app-modal.open{display:flex;}
+  .am-panel{position:relative;width:100%;max-width:470px;max-height:86vh;overflow-y:auto;background:linear-gradient(180deg,var(--app-tint,transparent) 0%,transparent 34%),var(--paper);border:1px solid var(--rule);border-top:6px solid var(--app-theme,#12363a);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.4);padding:30px 30px 34px;animation:amRise .28s cubic-bezier(.22,1,.36,1);}
+  @keyframes amRise{from{opacity:0;transform:translateY(16px) scale(.98);}to{opacity:1;transform:none;}}
+  .am-close{position:absolute;top:8px;right:14px;background:none;border:none;font-size:27px;line-height:1;color:var(--muted);cursor:pointer;}
+  .am-close:hover{color:var(--ink);}
+  .am-head{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
+  .am-img{width:82px;height:82px;flex:0 0 auto;border-radius:18px;object-fit:cover;border:1px solid var(--rule);box-shadow:0 5px 16px rgba(18,54,58,.2);}
+  .am-name{font-family:'Fraunces',serif;font-size:23px;font-weight:600;letter-spacing:-.3px;line-height:1.12;color:var(--app-theme,var(--shell));}
+  .am-desc{font-size:14px;line-height:1.72;color:var(--ink);}
+  @media(max-width:640px){.am-panel{padding:24px 20px 28px;} .am-head{gap:12px;} .am-img{width:64px;height:64px;}}
   .footer{text-align:center;margin-top:56px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
   .footer::before{content:'';display:block;width:40px;height:2px;background:var(--seg);margin:0 auto 18px;}
 </style>
@@ -265,6 +279,17 @@
 
   <div class="detail" id="detail"></div>
   <div class="footer">Living Document · Building Gradually · 2026</div>
+</div>
+
+<div class="app-modal" id="app-modal">
+  <div class="am-panel" role="dialog" aria-modal="true">
+    <button class="am-close" aria-label="Close">&times;</button>
+    <div class="am-head">
+      <img class="am-img" alt="">
+      <h3 class="am-name"></h3>
+    </div>
+    <p class="am-desc"></p>
+  </div>
 </div>
 
 <script>
@@ -368,15 +393,15 @@ const phases = [
   {
     ico:"🧭", label:"Phase 06", title:"Now — Looking Ahead", era:"Where this is going",
     sections:[
-      {title:"A Suite of Apps &amp; Solutions", shape:"w-6", images:[
-        {src:"assets/apps/gitget.png", alt:"GitGet"},
-        {src:"assets/apps/quicksum.png", alt:"QuickSum"},
-        {src:"assets/apps/projdash.png", alt:"ProjDash"},
-        {src:"assets/apps/liftbuddy.png", alt:"LiftBuddy"},
-        {src:"assets/apps/foodlog.png", alt:"FoodLog"},
-        {src:"assets/apps/taskcal.png", alt:"TaskCal"},
-        {src:"assets/apps/commandgm.png", alt:"Command GM"},
-        {src:"assets/apps/linkhoarder.png", alt:"Link Hoarder"}
+      {title:"A Suite of Apps &amp; Solutions", shape:"w-6", note:"Click an icon to read more about the app.", images:[
+        {src:"assets/apps/gitget.png", name:"GitGet", theme:"#6b3fe4", desc:"GitGet is a personal dashboard for all your live GitHub Pages sites — it auto-discovers every repo with Pages enabled, pulls each one's live URL and build status, and lays them out as tap-to-open cards on an installable phone app. Instead of digging through repos or the Actions tab to find a deployed site, you open GitGet, tap the repo, and you're there. It stays current two ways: a \"send to GitGet\" push from inside a build session the moment a page goes live, plus a one-tap Sync that scans GitHub for anything new."},
+        {src:"assets/apps/quicksum.png", name:"QuickSum", theme:"#2ea88f", desc:"QuickSum is a personal reading app (installable PWA) built for digesting dense, long-form material — books, government documents, publishings, PDFs, and articles — via AI-generated summaries. Rather than reading a summary once and forgetting it, QuickSum gives you a persistent, categorized library where you can annotate, highlight, and debrief on those summaries over time. It's essentially a \"second brain\" layer for tackling heavy texts that would otherwise take too long to read in full."},
+        {src:"assets/apps/projdash.png", name:"ProjDash", theme:"#6a4be6", desc:"ProjDash is a persistent, Claude-connected project tracker — say \"add this to the tracker\" in any chat, and it's saved to a shared Supabase-backed list you can also browse and update from a lightweight mobile-friendly web app. It exists to catch the \"come back to this later\" items (articles, research threads, build ideas, follow-ups) that otherwise get lost in conversation history, with bidirectional sync so updates from Claude or the app stay in lockstep."},
+        {src:"assets/apps/liftbuddy.png", name:"LiftBuddy", theme:"#2172e6", desc:"LiftBuddy is a personal workout tracking app built around your exact training system — it organizes your weekly gym schedule, shows your full exercise rotation by muscle slot, and remembers the weights you lifted last session so you always know what to beat. Think of it as a digital version of your session cards that lives on your phone."},
+        {src:"assets/apps/foodlog.png", name:"FoodLog", theme:"#2f7de6", desc:"FoodLog is a personal recipe and meal idea tracker that lets you save, organize, and visually browse your favorite foods across four categories — Breakfast, Meals, Snacks, and Misc. With a TikTok-style scroll feed, AI-powered idea suggestions, and optional recipe notes and calorie tracking, it turns your go-to meals into a beautifully organized personal cookbook that lives on your phone like any native app."},
+        {src:"assets/apps/taskcal.png", name:"TaskCal", theme:"#2f6fe6", desc:"TaskCal (Task Calendar) is a personal day planner built for your phone — add tasks, mark them done, and organize recurring habits into step-by-step routines, all in one clean interface. It gives you a day view, week view, and month view so you can see your schedule at any scale, with extras like custom lists, drag-to-reorder, and categories to keep everything sorted."},
+        {src:"assets/apps/commandgm.png", name:"Command GM", theme:"#1f8f6a", desc:"Command GM is an AI-powered dynasty fantasy football assistant that knows your league — your roster, your rivals' rosters, real-time player values from FantasyCalc, and live NFL depth charts from Sleeper. You chat with it like a text message, ask anything from \"should I accept this trade?\" to \"who's the best waiver add right now?\", and get instant, opinionated answers grounded in actual data instead of generic advice. It's your GM brain, available 24/7, built specifically for my fantasy football league."},
+        {src:"assets/apps/linkhoarder.png", name:"Link Hoarder", theme:"#6d5ae6", desc:"Link Hoarder is a \"save now, triage later\" bookmarking system: links get dropped in from anywhere — including straight from your phone via the PWA's share-target — and land in a Supabase-backed queue with categories, tags, and a status pipeline (unread → skimmed → act-on-it → archived), all searchable via full-text search. An MCP server sits in front of it so an AI assistant can save, query, and organize links directly, rather than doing it all by hand in the app. It's also paired with QuickSum: anything tagged into a \"deep read\" queue gets picked up on a recurring schedule, where QuickSum summarizes the items and writes the summaries back into Link Hoarder — so heavy reading gets distilled automatically instead of just piling up unread."}
       ]},
       {title:"Keeping the Flame Lit", shape:"w-6", cls:"lesson", items:[
         "<strong>Continuing the AI fluency push.</strong> I keep coming back to Article 4 of the EU's AI Act — its AI-literacy provision, which in a few words means: if you're deploying AI, your people have to be sufficiently fluent. With a new AI-powered product on our horizon, this is one of my top focuses. I already see how much our team believes in our current products, and how every facilitator can speak to their benefits in their own way — but reaching that same place with an AI-powered product means laying the groundwork first. And our team is the one on the front lines with it: how it cascades into real workplaces starts with how we educate about it — and this product is more dynamic, and behaves a bit differently, than the others. The start is expressing that importance clearly, and creating some of the conditions people need to start experiencing wins and begin their own AI fluency journey.",
@@ -468,8 +493,9 @@ function sectionBlock(s){
   const clsx=s.cls?' '+s.cls:'';
   let inner;
   if(s.images&&s.images.length){
-    inner=`<div class="apps-grid">${s.images.map((im,i)=>
-      `<div class="app-card" style="animation-delay:${(i*0.10).toFixed(2)}s"><img src="${im.src}" alt="${im.alt||''}" loading="lazy"></div>`
+    const note=s.note?`<p class="apps-note">${s.note}</p>`:'';
+    inner=note+`<div class="apps-grid">${s.images.map((im,i)=>
+      `<div class="app-card" style="animation-delay:${(i*0.10).toFixed(2)}s" onclick="openApp(${i})"><img src="${im.src}" alt="${im.name||im.alt||''}" loading="lazy"></div>`
     ).join('')}</div>`;
   } else if(s.items&&s.items.length){
     inner=`<ul>${s.items.map(x=>`<li>${x}</li>`).join('')}</ul>`;
@@ -478,6 +504,31 @@ function sectionBlock(s){
   } else { inner=''; }
   return `<div class="block ${sh}${clsx}"><h3>${s.title}</h3>${inner}${s.extra||''}</div>`;
 }
+let CURRENT_APPS=[];
+function hexToRgba(hex,a){hex=(hex||'#12363a').replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;}
+function openApp(i){
+  const a=CURRENT_APPS[i]; if(!a) return;
+  const m=document.getElementById('app-modal');
+  const theme=a.theme||'#12363a';
+  m.style.setProperty('--app-theme',theme);
+  m.style.setProperty('--app-tint',hexToRgba(theme,.12));
+  const img=m.querySelector('.am-img');
+  img.src=a.src; img.alt=a.name||a.alt||'';
+  m.querySelector('.am-name').textContent=a.name||a.alt||'';
+  m.querySelector('.am-desc').textContent=a.desc||'';
+  m.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeApp(){
+  document.getElementById('app-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+(function(){
+  const m=document.getElementById('app-modal');
+  m.addEventListener('click',e=>{if(e.target===m)closeApp();});
+  m.querySelector('.am-close').addEventListener('click',closeApp);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeApp();});
+})();
 
 let prevIndex = 0;
 
@@ -513,6 +564,8 @@ function select(i){
   if(p.placeholder){
     d.innerHTML = `<p class="placeholder-note">Nothing here yet — this slot is being held open.</p>`;
   } else if(p.sections){
+    const appsSec = p.sections.find(s=>s.images);
+    CURRENT_APPS = appsSec ? appsSec.images : [];
     d.innerHTML = `
       <div class="block-grid">
         ${thesis(p)}
