@@ -142,7 +142,7 @@
     background:#fff;border:1px solid var(--rule);border-radius:10px;
     padding:20px 22px;box-shadow:0 2px 10px rgba(18,54,58,.05);
     transition:box-shadow .25s ease, transform .25s ease, border-color .25s ease;
-    height:100%;
+    align-self:start;
   }
   .block:hover{box-shadow:0 8px 22px rgba(18,54,58,.11);transform:translateY(-2px);border-color:var(--seg-lit);}
 
@@ -577,9 +577,9 @@ function select(i){
     d.innerHTML = `
       <div class="block-grid">
         ${enterBlock(p)}
-        ${oeBlock(p.comprised,p.observed, hasBuilds ? null : 'w-6', p.oe)}
-        ${hasBuilds ? block('Relevant Builds',p.built,'w-2 tall','builds-dark') : ''}
-        ${block('Lessons Learned','lessons' in p ? p.lessons : null,'w-6','lesson')}
+        ${oeBlock(p.comprised,p.observed, 'w-6', p.oe)}
+        ${block('Lessons Learned','lessons' in p ? p.lessons : null, hasBuilds?'w-4':'w-6','lesson')}
+        ${hasBuilds ? block('Relevant Builds',p.built,'w-2','builds-dark') : ''}
         ${comps(p)} ${thesis(p)} ${quest(p)}
       </div>`;
   }
