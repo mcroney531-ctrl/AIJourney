@@ -314,7 +314,7 @@ const phases = [
     }
   },
   {
-    ico:"💡", label:"Phase 04", title:"The Unlocking of Ideas", era:"The \"I wonder\" moments",
+    ico:"💡", label:"Phase 04", title:"The Augmentation Transformation", era:"The \"I wonder\" moments", hideBuilds:true,
     lede:"The breakthrough was the stumble. This is what thinking does next. Once you have seen a capability exist, ideas stop dying at \"I could never make that.\" The constraint quietly shifts from capability to imagination — and that shift is available to anyone, well before any credential.",
     lessons:[
       "The real unlock is not a skill. It is a change in what you believe is worth attempting.",
@@ -466,11 +466,12 @@ function select(i){
   if(p.placeholder){
     d.innerHTML = `<p class="placeholder-note">Nothing here yet — this slot is being held open.</p>`;
   } else {
+    const hasBuilds = !!(p.built && p.built.length && !p.hideBuilds);
     d.innerHTML = `
       <div class="block-grid">
         ${enterBlock(p)}
-        ${oeBlock(p.comprised,p.observed,null,p.oe)}
-        ${block('Relevant Builds',p.built,'w-2 tall')}
+        ${oeBlock(p.comprised,p.observed, hasBuilds ? null : 'w-6', p.oe)}
+        ${hasBuilds ? block('Relevant Builds',p.built,'w-2 tall') : ''}
         ${block('Lessons Learned','lessons' in p ? p.lessons : null,'w-6','lesson')}
         ${comps(p)} ${thesis(p)} ${quest(p)}
       </div>`;
