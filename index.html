@@ -211,9 +211,9 @@
   .block .enter-list .lead{font-weight:700;color:var(--shell);}
 
   .component,.thesis,.questions{grid-column:1/-1;border-radius:10px;padding:24px 28px;}
-  .component{background:linear-gradient(135deg,rgba(217,139,95,.13) 0%,rgba(182,69,44,.06) 100%);border:1px solid rgba(182,69,44,.28);border-left:4px solid var(--accent);}
-  .c-tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px;}
-  .component h4{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--accent);line-height:1.3;margin-bottom:10px;}
+  .component{background:linear-gradient(135deg,rgba(111,184,182,.16) 0%,rgba(79,154,155,.05) 100%);border:1px solid var(--rule);border-left:4px solid var(--seg-lit);}
+  .c-tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--seg-dim);font-weight:600;margin-bottom:10px;}
+  .component h4{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--shell);line-height:1.3;margin-bottom:10px;}
   .component p,.thesis p{font-size:12.8px;line-height:1.72;}
   .thesis{background:var(--shell);border:2px solid var(--shell);color:#eaf4f2;}
   .t-tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--seg-lit);font-weight:600;margin-bottom:10px;}
@@ -313,8 +313,6 @@ const phases = [
       intro:"<strong>By this point my sense of how to actually work with AI had grown, and I was open to using it in new ways — but I still didn't have a use case, so it all stayed abstract.</strong> What changed it was social media: I kept seeing fellow CFB 26 dynasty players talk about using AI to enrich the experience by building a storyline around it. It sounded interesting, but I didn't really know what they meant — so eventually I looked it up. I saw how people fed the AI context and instructions, set a cadence to match the weekly rhythm of a football season, and built a cast of voices: faux newspaper articles, beat reporters, player quotes. It finally clicked as something I could actually do when I read one person's flow — snapping photos of the stat sheet after each game, uploading them, and having the AI generate the narratives and keep the stats over time. So I decided to give it a try."
     },
     components:[
-      {tag:"The Front-End Breakthrough", title:"\"Wait — I didn't know it could do this.\"",
-       body:"Not building. Not an app, not a repository, not yet. Just the realization that a working page could generate right there in the conversation — visuals and all — through prompting alone. A chore system came together almost by accident, something I never set out to design. That stumble is the hinge, and it is available to anyone: the moment you discover a capability you did not know was on the table, your sense of what is possible resets. Everything after it starts with \"if it can do this, I wonder if it can also…\""},
       {tag:"Where the Thesis Comes From", title:"\"Oh — this is like writing my own little story.\"",
        body:"Geopolitical what-if scenarios: conversations I could not have with other people because the subject knowledge simply was not there. Somewhere in those, the realization landed — this is like writing my own little story. The content was mine, the scenarios were mine, so what came back was shaped by what I brought. That is the whole thesis, felt before it was ever articulated. The general form: what you get out is downstream of what you bring, and the fastest way to feel that is to use it on something only you know well."}
     ]
@@ -333,7 +331,11 @@ const phases = [
     observed:["Capability was no longer the ceiling; capacity was","Ideas were flowing well before any credential validated them","Most people never reach this phase because they never had the first breakthrough"],
     resources:["A living-document system for capture","Everything from the breakthrough moment, now compounding"],
     work:["This is the phase a certificate gets mistaken for the start of"],
-    personal:["For me this produced the Idea Inventory, the Running List of Principles, and named frameworks like the Jarvis Ceiling — all before any formal course."]
+    personal:["For me this produced the Idea Inventory, the Running List of Principles, and named frameworks like the Jarvis Ceiling — all before any formal course."],
+    components:[
+      {tag:"The Front-End Breakthrough", title:"\"Wait — I didn't know it could do this.\"",
+       body:"Not building. Not an app, not a repository, not yet. Just the realization that a working page could generate right there in the conversation — visuals and all — through prompting alone. A chore system came together almost by accident, something I never set out to design. That stumble is the hinge, and it is available to anyone: the moment you discover a capability you did not know was on the table, your sense of what is possible resets. Everything after it starts with \"if it can do this, I wonder if it can also…\""}
+    ]
   },
   {
     ico:"📣", label:"Phase 05", title:"The AI Fluency Push", era:"Finding the people, then the outward turn", hasThesis:true,
