@@ -225,6 +225,8 @@
   .questions li::before{content:'?';position:absolute;left:0;top:6px;font-family:'Fraunces',serif;font-weight:700;color:var(--seg-dim);font-size:15px;}
   .placeholder-note{text-align:center;color:var(--muted);font-style:italic;font-size:15px;padding:24px 0;line-height:1.7;}
   .pending{font-size:12.8px;color:var(--muted);font-style:italic;line-height:1.6;padding:4px 0;}
+  .phase-intro{grid-column:1/-1;font-size:14.5px;line-height:1.78;max-width:780px;padding:2px 6px 0;}
+  .phase-intro strong{color:var(--shell);font-weight:700;}
   .apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;margin-top:6px;}
   .app-card{opacity:0;animation:appFade .45s cubic-bezier(.22,1,.36,1) forwards;}
   .app-card img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:18px;border:1px solid var(--rule);box-shadow:0 6px 18px rgba(18,54,58,.16);}
@@ -379,6 +381,7 @@ const phases = [
     thesisTag:"Where I've Landed",
     thesisTitle:"Your outputs are a reflection of your thinking.",
     thesisBody:"The ceiling rises with the evaluative capacity of the person directing it — the Jarvis Ceiling. This is why fluency cannot be delivered by a tool rollout: the tool is constant, the thinking is the variable. It is also why resistance is not a comprehension problem. It is an identity and ritual problem, and it cuts across technical and non-technical people alike. Threat literacy over tech fluency. Human first.",
+    intro:"For me, the reflection that's come into focus over time is this: using AI in unique ways to solve unique problems, through methods that make sense specifically to me — how I operate, on my terms. Experiencing small wins and watching them compound into larger ones, and into bigger efforts over time, has left me with a new set of skills and a different way of thinking when I face a problem. <strong>Some examples:</strong>",
     lede:"Where it stands today, and what is on the horizon. A credential is one stop on a longer arc — which is the reason this is worth telling as a progression rather than a certificate. The same is true for any organization deciding how to approach this.",
     lessons:[
       "The gap between deploying a tool and integrating it is far wider than most estimates assume. Access is not adoption, and adoption is not integration.",
@@ -505,6 +508,7 @@ function select(i){
     d.innerHTML = `
       <div class="block-grid">
         ${thesis(p)}
+        ${p.intro?`<div class="phase-intro"><p>${p.intro}</p></div>`:''}
         ${p.sections.map(sectionBlock).join('')}
         ${quest(p)}
       </div>`;
