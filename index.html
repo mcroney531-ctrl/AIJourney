@@ -335,7 +335,7 @@ const phases = [
     }
   },
   {
-    ico:"📣", label:"Phase 05", title:"The AI Fluency Push", era:"The outward turn", hasThesis:true,
+    ico:"📣", label:"Phase 05", title:"The AI Fluency Push", era:"The outward turn",
     lede:"The outward turn. Once your own relationship with the tool has transformed, the old fear of a widening divide becomes a reason to act. Conversations, showcased builds, helping people land their first win — creating the conditions for others to start the same arc, because all of it compounds.",
     lessons:[
       "<strong>Experience is what gives the conversation weight.</strong> Conviction earned through real use — including knowing what AI is <em>not</em> for — is what actually moves the discourse. Commentary without practice is just more noise.",
@@ -350,10 +350,7 @@ const phases = [
     personal:["MaryKate and April taking the Anthropic AI Fluency course alongside me, with a Teams group chat around it — a live example happening right now, not a hypothetical.","I found the study in the community and built the activity in the push — that sequence is the whole model in miniature."],
     enter:{
       intro:"<strong>Now that my sense of AI and my relationship with the tool had fundamentally changed, I found myself thinking back to that Phase 01 fear — the 'next great divider.'</strong> The conversation had only grown more divisive since 2023; lines were being drawn. Having shifted my own perspective and started picturing the future differently, I realized how much it would matter for other people to go on an arc like mine. It wasn't that I now used AI for everything — if anything, the experience sharpened my sense of what it's for and what it's not. It's nowhere near as black-and-white as the media makes it. But given what a lightning rod it's become, I can only see the divide widening. Before my own experience I probably wouldn't have said that, and I still have trouble fully articulating it. When it comes to work, though, I came away certain: its presence will only get more ingrained over time, which will widen that divide further — and I now know what it takes to change someone's perspective, and what that unlocks. That's what pushes me to keep urging the people around me to start with exploration, go on their own arc, and gradually build fluency and a relationship with the tool. Because it compounds."
-    },
-    thesisTag:"The Thesis of the Whole Thing",
-    thesisTitle:"Your outputs are a reflection of your thinking.",
-    thesisBody:"The ceiling rises with the evaluative capacity of the person directing it — the Jarvis Ceiling. This is why fluency cannot be delivered by a tool rollout: the tool is constant, the thinking is the variable. It is also why resistance is not a comprehension problem. It is an identity and ritual problem, and it cuts across technical and non-technical people alike. Threat literacy over tech fluency. Human first."
+    }
   },
   {
     ico:"🧭", label:"Phase 06", title:"Now — Looking Ahead", era:"Where this is going",
@@ -378,6 +375,10 @@ const phases = [
       {title:"Keeping the Flame Lit", shape:"w-6", cls:"lesson"}
     ],
     questionsTitle:"Questions Moving Forward",
+    hasThesis:true,
+    thesisTag:"Where I've Landed",
+    thesisTitle:"Your outputs are a reflection of your thinking.",
+    thesisBody:"The ceiling rises with the evaluative capacity of the person directing it — the Jarvis Ceiling. This is why fluency cannot be delivered by a tool rollout: the tool is constant, the thinking is the variable. It is also why resistance is not a comprehension problem. It is an identity and ritual problem, and it cuts across technical and non-technical people alike. Threat literacy over tech fluency. Human first.",
     lede:"Where it stands today, and what is on the horizon. A credential is one stop on a longer arc — which is the reason this is worth telling as a progression rather than a certificate. The same is true for any organization deciding how to approach this.",
     lessons:[
       "The gap between deploying a tool and integrating it is far wider than most estimates assume. Access is not adoption, and adoption is not integration.",
@@ -503,6 +504,7 @@ function select(i){
   } else if(p.sections){
     d.innerHTML = `
       <div class="block-grid">
+        ${thesis(p)}
         ${p.sections.map(sectionBlock).join('')}
         ${quest(p)}
       </div>`;
