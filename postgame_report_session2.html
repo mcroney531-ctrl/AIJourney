@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Postgame Report — The AI Arc, Build Session 2</title>
+<title>Revision History — The AI Arc, Build Session 2</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -11,7 +11,8 @@
     --rule:#cfe0dc; --card:#f7fbfa;
     --shell:#12363a; --seg:#4f9a9b; --seg-lit:#6fb8b6; --seg-dim:#3d7d80;
     --tint-1:rgba(111,184,182,.28); --tint-2:rgba(79,154,155,.14);
-    --accent:#b6452c; --accent-soft:#d98b5f;
+    --accent:#b6452c;
+    --del:#b6452c; --ins:#1f7a52;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{
@@ -21,47 +22,50 @@
     background-image:radial-gradient(circle at 12% 6%, rgba(79,154,155,.07), transparent 45%),
                      radial-gradient(circle at 88% 94%, rgba(18,54,58,.05), transparent 45%);
   }
-  .wrap{max-width:920px;margin:0 auto;}
+  .wrap{max-width:900px;margin:0 auto;}
 
   .masthead{text-align:center;margin-bottom:8px;}
-  .masthead .kicker{font-family:'Merriweather',serif;font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--seg-dim);font-weight:700;}
+  .masthead .kicker{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--seg-dim);font-weight:700;}
   .masthead h1{font-family:'Fraunces',serif;font-size:42px;font-weight:600;letter-spacing:-1px;line-height:1.05;margin:10px 0 6px;}
-  .masthead .sub{font-size:14px;color:var(--muted);max-width:600px;margin:0 auto;line-height:1.6;}
-  .divider{width:60px;height:2px;background:var(--seg);margin:26px auto 40px;}
+  .masthead .sub{font-size:14px;color:var(--muted);max-width:620px;margin:0 auto;line-height:1.6;}
+  .divider{width:60px;height:2px;background:var(--seg);margin:26px auto 34px;}
 
   /* SCOREBOARD */
-  .scoreboard{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:34px;}
+  .scoreboard{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
   .stat{background:var(--shell);border-radius:10px;padding:20px 16px;text-align:center;color:#eaf4f2;}
   .stat .num{font-family:'Fraunces',serif;font-size:32px;font-weight:700;color:var(--seg-lit);line-height:1;}
   .stat .lbl{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;margin-top:8px;color:rgba(234,244,242,.75);line-height:1.4;}
   @media(max-width:640px){.scoreboard{grid-template-columns:repeat(2,1fr);}}
 
-  .section{margin-bottom:36px;}
-  .section-title{font-family:'Fraunces',serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--seg-dim);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--rule);}
+  /* LEGEND */
+  .legend{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:40px;}
+  .legend span{display:inline-flex;align-items:center;gap:7px;}
+
+  .section{margin-bottom:34px;}
+  .section-title{font-family:'Fraunces',serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--seg-dim);margin-bottom:6px;padding-bottom:8px;border-bottom:2px solid var(--rule);}
+  .section-note{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;}
+
+  /* REDLINE TOKENS */
+  del,.del{color:var(--del);background:rgba(182,69,44,.09);text-decoration:line-through;border-radius:2px;padding:0 2px;text-decoration-thickness:1px;}
+  ins,.ins{color:var(--ins);background:rgba(79,154,155,.16);text-decoration:none;border-radius:2px;padding:0 2px;font-weight:400;}
+
+  /* TRACKED CHANGE CARD */
+  .tc{background:#fff;border:1px solid var(--rule);border-radius:8px;padding:14px 18px;margin-bottom:10px;}
+  .tc-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:9px;}
+  .tc-text{font-size:13.5px;line-height:1.75;}
+  .tc-note{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:9px;padding-top:8px;border-top:1px dashed var(--rule);}
+  .tc.big .tc-text{font-size:13px;line-height:1.7;}
+  .tc.big .row{margin-bottom:8px;}
+  .tc.big .row:last-child{margin-bottom:0;}
 
   /* PATHS */
-  .path-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px;}
+  .path-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px;}
   .path{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;align-items:center;}
   .path-step{background:#fff;border:1px solid var(--rule);border-radius:20px;padding:7px 14px;font-size:12.5px;}
   .path-step.kept{border-color:var(--seg);background:var(--tint-2);font-weight:700;}
   .path-step.cut{color:var(--muted);}
   .path-step.rev{color:var(--muted);text-decoration:line-through;}
   .arrow{color:var(--muted);font-size:13px;}
-
-  /* DECISION LOG */
-  .decision{background:#fff;border:1px solid var(--rule);border-left:4px solid var(--shell);border-radius:8px;padding:18px 22px;margin-bottom:12px;}
-  .decision .d-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin-bottom:6px;}
-  .decision .d-body{font-size:13px;line-height:1.62;color:var(--ink);}
-  .decision .d-tag{display:inline-block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px;}
-
-  /* TEXT EVOLUTION */
-  .evo{background:#fff;border:1px solid var(--rule);border-radius:8px;padding:16px 20px;margin-bottom:10px;}
-  .evo .e-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-  .evo-chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;line-height:1.5;}
-  .evo-chain .stage{padding:4px 10px;border-radius:5px;background:var(--tint-2);}
-  .evo-chain .stage.rev{background:#fff;border:1px solid var(--rule);color:var(--muted);}
-  .evo-chain .stage.final{background:var(--shell);color:#fff;font-weight:700;}
-  .evo-chain .arrow{color:var(--seg-dim);}
 
   /* CUTS */
   .cutlist{list-style:none;}
@@ -70,16 +74,8 @@
   .cutlist li::before{content:'\2702';position:absolute;left:0;top:9px;color:var(--accent);font-size:12px;}
   .cutlist .why{color:var(--muted);font-style:italic;}
 
-  /* CATEGORY BREAKDOWN */
-  .catgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .catbox{background:#fff;border:1px solid var(--rule);border-radius:8px;padding:16px 20px;}
-  .catbox h4{font-family:'Fraunces',serif;font-size:14px;font-weight:600;margin-bottom:8px;color:var(--seg-dim);}
-  .catbox .count{font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--shell);}
-  .catbox p{font-size:12px;color:var(--muted);line-height:1.5;margin-top:4px;}
-  @media(max-width:640px){.catgrid{grid-template-columns:1fr;}}
-
   .closer{background:linear-gradient(135deg,var(--tint-1) 0%,var(--tint-2) 100%);border:2px solid var(--shell);border-radius:10px;padding:26px 28px;text-align:center;}
-  .closer p{font-size:14px;line-height:1.7;max-width:640px;margin:0 auto;}
+  .closer p{font-size:14px;line-height:1.7;max-width:650px;margin:0 auto;}
   .closer .big{font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--shell);margin-bottom:10px;}
 
   .footer{text-align:center;margin-top:50px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
@@ -89,187 +85,200 @@
 <div class="wrap">
 
   <div class="masthead">
-    <div class="kicker">Postgame Report</div>
+    <div class="kicker">Revision History</div>
     <h1>The AI Arc — Session 2</h1>
-    <p class="sub">The first session with a repo behind it. Reconstructed from the git history and the working conversation — DECISIONS.md wasn't kept this session, so the decision log below is rebuilt from the record, not dumped from a file.</p>
+    <p class="sub">A tracked-changes view of the build. Reconstructed from the full revision history and the working conversation — read the redlines below the way you'd read a marked-up draft.</p>
   </div>
   <div class="divider"></div>
 
   <!-- SCOREBOARD -->
   <div class="scoreboard">
-    <div class="stat"><div class="num">64</div><div class="lbl">Commits, Each Pushed Live</div></div>
+    <div class="stat"><div class="num">64</div><div class="lbl">Saved Versions, Each Live</div></div>
     <div class="stat"><div class="num">8&nbsp;&rarr;&nbsp;6</div><div class="lbl">Phases, After Reorder &amp; Merge</div></div>
     <div class="stat"><div class="num">8</div><div class="lbl">App Tiles Wired to Themed Modals</div></div>
-    <div class="stat"><div class="num">~23h</div><div class="lbl">First Commit to Last (Across Two Days)</div></div>
+    <div class="stat"><div class="num">~23h</div><div class="lbl">First Version to Last, Across Two Days</div></div>
   </div>
 
-  <!-- THE PATH -->
+  <div class="legend">
+    <span><del>struck rust</del> = removed</span>
+    <span><ins>highlighted teal</ins> = added</span>
+  </div>
+
+  <!-- CONTESTED DIRECTIONS -->
   <div class="section">
-    <div class="section-title">The Contested Directions — What Changed Its Mind</div>
+    <div class="section-title">Directions That Changed Their Mind</div>
+    <div class="section-note">Where a whole approach was tried, then swapped — not just a word.</div>
 
     <div class="path-label">Phase structure</div>
     <div class="path">
-      <span class="path-step cut">8 phases, original order</span>
-      <span class="arrow">&rarr;</span>
-      <span class="path-step cut">reordered (UMD &rarr; 02, Applications &rarr; 03, blank relocated)</span>
-      <span class="arrow">&rarr;</span>
-      <span class="path-step cut">fold Community into the Push, drop both blanks</span>
-      <span class="arrow">&rarr;</span>
-      <span class="path-step kept">6 phases (shipped)</span>
+      <span class="path-step cut">8 phases, original order</span><span class="arrow">&rarr;</span>
+      <span class="path-step cut">reordered</span><span class="arrow">&rarr;</span>
+      <span class="path-step cut">fold Community into the Push, drop both blanks</span><span class="arrow">&rarr;</span>
+      <span class="path-step kept">6 phases (kept)</span>
     </div>
 
     <div class="path-label">Mobile layout</div>
     <div class="path">
-      <span class="path-step cut">single-column stack</span>
-      <span class="arrow">&rarr;</span>
-      <span class="path-step rev">2-column bento (mirror the desktop bands)</span>
-      <span class="arrow">&rarr;</span>
+      <span class="path-step cut">single-column stack</span><span class="arrow">&rarr;</span>
+      <span class="path-step rev">2-column bento</span><span class="arrow">&rarr;</span>
       <span class="path-step kept">single-column stack again — reverted, smoother scroll</span>
     </div>
 
     <div class="path-label">Relevant Builds tile</div>
     <div class="path">
-      <span class="path-step cut">stretched to the O&amp;E's height (large internal void)</span>
-      <span class="arrow">&rarr;</span>
-      <span class="path-step cut">content-sized square, on its own row</span>
-      <span class="arrow">&rarr;</span>
-      <span class="path-step kept">paired beside Lessons, dark-shell treatment (shipped)</span>
+      <span class="path-step cut">stretched to O&amp;E height (large void)</span><span class="arrow">&rarr;</span>
+      <span class="path-step cut">content-sized, own row</span><span class="arrow">&rarr;</span>
+      <span class="path-step kept">paired beside Lessons, dark-shell (kept)</span>
     </div>
   </div>
 
-  <!-- DECISION LOG -->
+  <!-- TITLES, HEADERS, LINKS -->
   <div class="section">
-    <div class="section-title">Decision Log — Where a Direction Got Chosen</div>
+    <div class="section-title">Titles, Headers &amp; Links</div>
 
-    <div class="decision">
-      <div class="d-tag">Structural</div>
-      <div class="d-title">Eight phases collapsed to six</div>
-      <div class="d-body">Professional Community was folded into the AI Fluency Push — the Push's own lede already treated community as its setup, so they were arguing one point in two boxes. Both open-slot / blank phases were then deleted rather than backfilled. All of Community's material was preserved into the merged phase first, not dropped, then trimmed deliberately over later turns.</div>
+    <div class="tc">
+      <div class="tc-label">Project title</div>
+      <div class="tc-text">The <del>Progression</del> <ins>AI Arc</ins></div>
     </div>
 
-    <div class="decision">
-      <div class="d-tag">Content</div>
-      <div class="d-title">The CFB dynasty relocated out of Phase 01 — takeaways and all</div>
-      <div class="d-body">Phase 01 was rewritten as a genuine skeptic's entry (2023 test sessions &rarr; Sora 2 &rarr; deciding to learn), which no longer had room for the college-football-dynasty origin. Rather than delete it, the dynasty and its "play / low-stakes / output tracks input" takeaways were moved into Initial Applications, where that evidence actually belongs. Content followed the argument, not the outline.</div>
+    <div class="tc">
+      <div class="tc-label">Phase 04 title</div>
+      <div class="tc-text">The <del>Unlocking of Ideas</del> <ins>Augmentation Transformation</ins></div>
     </div>
 
-    <div class="decision">
-      <div class="d-tag">Structural / Content</div>
-      <div class="d-title">The component callout format, retired in two moves</div>
-      <div class="d-body">Both special "moment" callouts were dissolved back into normal content: "Where the Thesis Comes From" became a Phase 03 Takeaway; the "Front-End Breakthrough" became Phase 04's first What-Happened beat. The bordered-callout pattern (and later its warm color) stopped earning its distinctness once the surrounding copy carried the same weight. The CSS was left in place, unused.</div>
+    <div class="tc">
+      <div class="tc-label">Thesis banner tag</div>
+      <div class="tc-text"><del>The Thesis of the Whole Thing</del> <ins>Where I've Landed</ins></div>
+      <div class="tc-note">Not just re-tagged — the whole block moved from the middle of Phase 05 to the top of Phase 06, so the arc builds toward the idea instead of announcing it early.</div>
     </div>
 
-    <div class="decision">
-      <div class="d-tag">Content</div>
-      <div class="d-title">The thesis moved to the end and fully rewritten</div>
-      <div class="d-body">"Your outputs are a reflection of your thinking" started mid-arc in Phase 05, tagged "The Thesis of the Whole Thing." It was relocated to the top of Phase 06 and re-tagged "Where I've Landed," so the arc <em>builds toward</em> the idea instead of announcing it early. The body was swapped out entirely — from the Jarvis-Ceiling shorthand to a self-contained argument that needs no prior framing.</div>
-    </div>
-
-    <div class="decision">
-      <div class="d-tag">Content / Tone</div>
-      <div class="d-title">Lessons and summary ledes regenerated wholesale, once</div>
-      <div class="d-body">After the reorder and the copy build, the oldest blocks on the page — the Lessons tiles and the phase ledes — still argued the pre-reorder story (Phase 02 still talked about credentials-as-translation-devices; Phase 04 still said "before any credential"). All of Phases 01&ndash;05 were regenerated in one pass to 2&ndash;3 distilled, evidence-backed principles each, matched to what the phases had actually become.</div>
-    </div>
-
-    <div class="decision">
-      <div class="d-tag">Structural / Visual</div>
-      <div class="d-title">The desktop layout was fixed by screenshot, not by assumption</div>
-      <div class="d-body">The Relevant Builds boxes were stretching to the O&amp;E's height and filling with blank space. The fix — content-sized builds paired beside the Lessons tile, full-width O&amp;E, and removing a global <code>height:100%</code> stretch — was checked by rendering the actual pages in a headless browser and measuring box heights, then re-checking mobile, before it shipped.</div>
-    </div>
-
-    <div class="decision">
-      <div class="d-tag">Structural</div>
-      <div class="d-title">Phase 06 built as its own template</div>
-      <div class="d-body">Flagged early as "fundamentally different," Phase 06 was given a separate, section-based render path rather than the 01&ndash;05 bento — an app suite, certifications, and a "keeping the flame lit" block, with the thesis banner up top. The app suite grew into eight clickable tiles that open a modal color-themed to each logo, verified end-to-end (click &rarr; themed panel &rarr; Esc-to-close) before shipping.</div>
+    <div class="tc">
+      <div class="tc-label">Every build link</div>
+      <div class="tc-text">(<del>view the build</del> <ins><strong>View here</strong></ins>)</div>
     </div>
   </div>
 
-  <!-- TEXT EVOLUTION -->
+  <!-- COPY CLEANED FROM RAW NOTES -->
   <div class="section">
-    <div class="section-title">Text Evolution — Verbatim Chains</div>
+    <div class="section-title">Copy, Cleaned From Raw Notes</div>
+    <div class="section-note">Source text arrived as fast, unpolished dictation. The shipped line is the cleaned one — this is most of the actual labor.</div>
 
-    <div class="evo">
-      <div class="e-label">Project title</div>
-      <div class="evo-chain">
-        <span class="stage">"The Progression"</span><span class="arrow">&rarr;</span>
-        <span class="stage final">"The AI Arc"</span>
+    <div class="tc">
+      <div class="tc-label">Phase 01 &middot; What Happened</div>
+      <div class="tc-text">I wanted to help by <del>increasing awareness for those aroune me</del> <ins>raising awareness for the people around me</ins> &mdash; a small, occasional "real or AI?" <del>Activity</del> <ins>bit</ins> at the end of a team huddle.</div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-label">Phase 01 &middot; What Happened</div>
+      <div class="tc-text">To run it, I'd have to <del>consistently and reliabily detect these things</del> <ins>reliably spot this stuff</ins> myself, and I couldn't.</div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-label">Phase 01 &middot; What Happened</div>
+      <div class="tc-text">I stayed there for the next year or <del>2</del> <ins>two</ins>, watching the models improve.</div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-label">Phase 06 &middot; lead paragraph (earliest draft)</div>
+      <div class="tc-text">the reflection that has <del>bern</del> <ins>been</ins> revealed &hellip; watching <del>the them</del> <ins>them</ins> compound into larger wins</div>
+      <div class="tc-note">This entire paragraph was later replaced again — see "The Thesis," below.</div>
+    </div>
+  </div>
+
+  <!-- RENAMES FOR ACCURACY -->
+  <div class="section">
+    <div class="section-title">Renames for Accuracy</div>
+    <div class="section-note">App names and abbreviations reconciled against the logos and first use.</div>
+
+    <div class="tc">
+      <div class="tc-label">Command GM &middot; description</div>
+      <div class="tc-text"><del>GM Command</del> <ins>Command GM</ins> is an AI-powered dynasty fantasy football assistant&hellip;</div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-label">FoodLog &middot; description</div>
+      <div class="tc-text"><del>**Food Log**</del> <ins>FoodLog</ins> is a personal recipe and meal idea tracker&hellip;</div>
+      <div class="tc-note">Markdown asterisks stripped, spacing closed to match the logo.</div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-label">Link Hoarder &middot; description</div>
+      <div class="tc-text"><del>LinkHoard</del> <ins>Link Hoarder</ins> is a "save now, triage later" bookmarking system &hellip; paired with <del>Quicksum</del> <ins>QuickSum</ins>.</div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-label">Phase 03 &middot; first mention</div>
+      <div class="tc-text">I kept seeing fellow CFB 26<ins> (College Football 26)</ins> dynasty players&hellip;</div>
+    </div>
+  </div>
+
+  <!-- SENTENCES THAT KEPT MOVING -->
+  <div class="section">
+    <div class="section-title">Sentences That Kept Moving</div>
+
+    <div class="tc">
+      <div class="tc-label">Phase 04 &middot; Entering intro &mdash; revised once, on purpose</div>
+      <div class="tc-text">By this point I'd interacted with AI extensively &mdash; but <del>still largely through</del> <ins>the relationship was still largely through the lens of</ins> back-and-forth chat. <del>My relationship with the tool had deepened, yet it</del> <ins>Though it had deepened, it still</ins> hadn't shifted into "idea execution" mode<ins> (Augmentation)</ins>. That was about to change.</div>
+      <div class="tc-note">"relationship" was pulled forward deliberately, and the AI-fluency term (Augmentation) added, then bolded.</div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-label">Phase 02 &middot; O&amp;E label &mdash; a clarification loop</div>
+      <div class="tc-text"><del>Rename the whole tile to "What Happened: Key Learnings" and the right column to "Key Learnings."</del> <ins>Tile stays "Observations &amp; Experience"; only the left column becomes "What Happened: Key Learnings"; the Takeaways column and the two-column split are untouched.</ins></div>
+      <div class="tc-note">Built the wrong reading first, shipped it, then reversed it after a one-image clarification. The most honest edit in the session.</div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-label">Phase 03 &middot; thesis-seed takeaway</div>
+      <div class="tc-text">&hellip;patterns in my life, career, and relationships over time that <del>genuinely brought</del> <ins>brought real</ins> clarity to my thinking.</div>
+      <div class="tc-note">One of a handful of "genuinely" trims, after you flagged the word as an overused tic to keep in check.</div>
+    </div>
+  </div>
+
+  <!-- THE THESIS -->
+  <div class="section">
+    <div class="section-title">The Thesis &mdash; the Two Full Rewrites</div>
+    <div class="section-note">The lines carrying the most weight were replaced outright, not tweaked.</div>
+
+    <div class="tc big">
+      <div class="tc-label">Masthead sub-line &mdash; from description to argument</div>
+      <div class="tc-text">
+        <div class="row"><del>Not a one-off course. An exponential arc &mdash; each phase built from the last. Click a phase to open it.</del></div>
+        <div class="row"><ins>I thought courses would be what moved me forward. What actually made these insights last was the combination &mdash; knowledge, real experience, and the right human conditions &mdash; compounding across every phase.</ins></div>
       </div>
     </div>
 
-    <div class="evo">
-      <div class="e-label">Phase 04 title</div>
-      <div class="evo-chain">
-        <span class="stage">"The Unlocking of Ideas"</span><span class="arrow">&rarr;</span>
-        <span class="stage final">"The Augmentation Transformation"</span>
+    <div class="tc big">
+      <div class="tc-label">Thesis body &mdash; from named-framework shorthand to self-contained</div>
+      <div class="tc-text">
+        <div class="row"><del>The ceiling rises with the evaluative capacity of the person directing it &mdash; the Jarvis Ceiling. This is why fluency cannot be delivered by a tool rollout: the tool is constant, the thinking is the variable&hellip; Threat literacy over tech fluency. Human first.</del></div>
+        <div class="row"><ins>AI doesn't create quality where none existed &mdash; it amplifies and executes whatever thinking you bring to it&hellip; The tool has no ceiling of its own &mdash; the ceiling is the thinker, not the tool&hellip; What comes out is just what you put in, reflected back at a different scale.</ins></div>
       </div>
-    </div>
-
-    <div class="evo">
-      <div class="e-label">Thesis block — re-tagged and relocated</div>
-      <div class="evo-chain">
-        <span class="stage">"The Thesis of the Whole Thing" (Phase 05, mid-arc)</span><span class="arrow">&rarr;</span>
-        <span class="stage final">"Where I've Landed" (top of Phase 06)</span>
-      </div>
-    </div>
-
-    <div class="evo">
-      <div class="e-label">Masthead sub-line — from description to thesis</div>
-      <div class="evo-chain">
-        <span class="stage">"Not a one-off course. An exponential arc &mdash; each phase built from the last."</span><span class="arrow">&rarr;</span>
-        <span class="stage final">"&hellip;what actually made these insights last was the combination &mdash; knowledge, real experience, and the right human conditions &mdash; compounding across every phase."</span>
-      </div>
-    </div>
-
-    <div class="evo">
-      <div class="e-label">O&amp;E label (Phase 02) — a clarification loop, not a straight edit</div>
-      <div class="evo-chain">
-        <span class="stage">rename tile &rarr; "What Happened: Key Learnings"</span><span class="arrow">&rarr;</span>
-        <span class="stage rev">over-reach: renamed the Takeaways column too</span><span class="arrow">&rarr;</span>
-        <span class="stage final">corrected: only the left column relabeled; tile name &amp; two-column split kept</span>
-      </div>
-    </div>
-
-    <div class="evo">
-      <div class="e-label">Build links</div>
-      <div class="evo-chain">
-        <span class="stage">"view the build"</span><span class="arrow">&rarr;</span>
-        <span class="stage final">"View here" (bold)</span>
-      </div>
+      <div class="tc-note">The idea is unchanged; the version that assumed you already knew "the Jarvis Ceiling" was swapped for one that explains itself to a first-time reader.</div>
     </div>
   </div>
 
   <!-- CUTS -->
   <div class="section">
-    <div class="section-title">Cuts &amp; Reversals — Built, Then Removed</div>
+    <div class="section-title">Cuts &amp; Reversals &mdash; Built, Then Removed</div>
     <ul class="cutlist">
-      <li>"Courses &amp; Resources" tile, present on every phase from the first build — removed once it stopped earning its space. <span class="why">The underlying data was left in the file, unrendered.</span></li>
-      <li>Mobile 2-column bento — built and shipped, then reverted on the very next turn. <span class="why">The single-column scroll simply felt smoother; structural mirroring lost to feel.</span></li>
-      <li>"New Workflows" section (Phase 06) — added as a placeholder box, then cut before it ever got content. <span class="why">Trimmed rather than filled; Other Certifications widened to take the row.</span></li>
-      <li>"Questions Moving Forward" box (Phase 06) — removed. <span class="why">The five questions were left dormant in the data, not deleted.</span></li>
-      <li>Two open-slot / blank phases — deleted outright in the 8&rarr;6 collapse. <span class="why">Held open early, then judged not worth holding.</span></li>
-      <li>The <code>.component</code> callout format — both instances dissolved into normal blocks. <span class="why">Its styling now sits unused; kept for a possible future callout.</span></li>
-      <li>A 192px "goblin-hub" placeholder tile — shipped for exactly one turn, then replaced by the full-resolution Link Hoarder image. <span class="why">Named and swapped once the real title and a higher-res file arrived.</span></li>
-      <li>"Salesforce teams ping" / "Utilization of&hellip;" — unfinished notes handed over mid-list, never published. <span class="why">Left out on purpose rather than shipping a fragment; later dropped entirely.</span></li>
+      <li>"Courses &amp; Resources" tile, on every phase from the start &mdash; removed once it stopped earning its space. <span class="why">Data left in the file, unrendered.</span></li>
+      <li>Mobile 2-column bento &mdash; built and shipped, reverted the next version. <span class="why">The single-column scroll simply felt smoother.</span></li>
+      <li>"New Workflows" section (Phase 06) &mdash; added as a placeholder, cut before it got content. <span class="why">Other Certifications widened to take the row.</span></li>
+      <li>"Questions Moving Forward" box (Phase 06) &mdash; removed. <span class="why">The five questions left dormant in the data.</span></li>
+      <li>Two open-slot / blank phases &mdash; deleted in the 8&rarr;6 collapse. <span class="why">Held open early, then judged not worth holding.</span></li>
+      <li>The bordered "component" callout format &mdash; both instances dissolved into normal blocks. <span class="why">Its styling now sits unused.</span></li>
+      <li>A 192px "goblin-hub" placeholder tile &mdash; live for exactly one version, replaced by the full-res Link Hoarder image. <span class="why">Swapped once the real name and file arrived.</span></li>
+      <li>"Salesforce teams ping" / "Utilization of&hellip;" &mdash; unfinished notes, never published. <span class="why">Left out on purpose rather than shipping a fragment.</span></li>
     </ul>
   </div>
 
-  <!-- CATEGORY BREAKDOWN -->
-  <div class="section">
-    <div class="section-title">Change Types, By Category</div>
-    <div class="catgrid">
-      <div class="catbox"><h4>Structural</h4><div class="count">6+</div><p>Reorder and merge to six phases, Phase 06's separate template, full-width O&amp;E, the builds/lessons pairing, the app-modal system, the hide-builds toggle</p></div>
-      <div class="catbox"><h4>Content</h4><div class="count">40+ blocks</div><p>Every Entering, What-Happened, Takeaway and Lesson across six phases, plus eight app descriptions &mdash; most written or rewritten from supplied source text</p></div>
-      <div class="catbox"><h4>Naming &amp; Visual</h4><div class="count">8+</div><p>Title, a phase title, the thesis tag, "View here," component recolor warm&rarr;teal, the dark-shell builds box, +4px O&amp;E header, per-logo modal theming</p></div>
-      <div class="catbox"><h4>Cuts &amp; Reversals</h4><div class="count">8</div><p>Removed tiles and sections, a reverted mobile layout, dissolved callouts, a one-turn placeholder image &mdash; judgment on display, not churn</p></div>
-    </div>
-  </div>
-
   <div class="closer">
-    <div class="big">The unglamorous truth of the session</div>
-    <p>The page's whole argument is that outputs are a reflection of the thinking behind them. The commit log is the uncensored version of that claim: sixty-four pushes, three reversals, a mobile layout built and then unbuilt, a miscommunication settled only by a screenshot, and a thesis that had to be carried to the very end before it read right. Most of those sixty-four were not new ideas — they were someone changing their mind on purpose, one small correction at a time. That is what the finished page is actually made of.</p>
+    <div class="big">What the redlines actually show</div>
+    <p>Very little of this landed on the first pass. The typos got cleaned, the app names got reconciled, one label was shipped wrong and pulled back, a sentence had "relationship" moved forward by hand, and the two most important lines on the page &mdash; the sub-head and the thesis &mdash; were thrown out and rewritten from scratch. Sixty-four versions, and most of the distance between the first and the last is exactly this: small, deliberate corrections, made on purpose.</p>
   </div>
 
-  <div class="footer">Compiled from git history &amp; conversation record · Session 2 · 2026</div>
+  <div class="footer">Compiled from revision history &amp; conversation record &middot; Session 2 &middot; 2026</div>
 </div>
 </body>
 </html>
