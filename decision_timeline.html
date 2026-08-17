@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decision Timeline — The AI Arc</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16302f; --paper:#fcfcfc; --muted:#6b8280;
+    --rule:#cfe0dc; --card:#f7fbfa;
+    --shell:#12363a; --seg:#4f9a9b; --seg-lit:#6fb8b6; --seg-dim:#3d7d80;
+    --tint-1:rgba(111,184,182,.28); --tint-2:rgba(79,154,155,.14);
+    --accent:#b6452c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:'Merriweather',serif;font-weight:300;padding:44px 24px 90px;min-height:100vh;
+    background-image:radial-gradient(circle at 12% 6%, rgba(79,154,155,.07), transparent 45%),radial-gradient(circle at 88% 94%, rgba(18,54,58,.05), transparent 45%);}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .masthead{text-align:center;margin-bottom:8px;}
+  .masthead .kicker{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--seg-dim);font-weight:700;}
+  .masthead h1{font-family:'Fraunces',serif;font-size:40px;font-weight:600;letter-spacing:-1px;line-height:1.05;margin:10px 0 6px;}
+  .masthead .sub{font-size:14px;color:var(--muted);max-width:640px;margin:0 auto;line-height:1.6;}
+  .divider{width:60px;height:2px;background:var(--seg);margin:26px auto 30px;}
+
+  .legend{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-bottom:38px;}
+  .legend .cap{position:static;}
+  .cap{display:inline-block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+  .cap.snap{background:var(--shell);color:var(--seg-lit);}
+  .cap.chat{background:#fff;color:var(--accent);border:1px dashed var(--accent);}
+  .cap.git{background:var(--tint-2);color:var(--seg-dim);border:1px solid var(--seg);}
+
+  .era{font-family:'Fraunces',serif;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--seg-dim);margin:34px 0 14px;display:flex;align-items:center;gap:12px;}
+  .era::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+  /* CHECKPOINT (a saved snapshot) */
+  .ckpt{background:var(--shell);color:#eaf4f2;border-radius:10px;padding:16px 22px;margin:14px 0;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+  .ckpt .c-v{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--seg-lit);}
+  .ckpt .c-name{font-family:'Fraunces',serif;font-size:15px;font-weight:600;}
+  .ckpt .c-desc{font-size:12px;color:rgba(234,244,242,.82);line-height:1.5;flex-basis:100%;margin-top:2px;}
+
+  /* DECISION */
+  .dec{background:#fff;border:1px solid var(--rule);border-left:3px solid var(--seg);border-radius:8px;padding:13px 18px;margin-bottom:9px;display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:start;}
+  .dec .d-main{grid-column:1;}
+  .dec .d-tag{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:4px;}
+  .dec .d-title{font-family:'Fraunces',serif;font-size:15px;font-weight:600;line-height:1.25;margin-bottom:4px;}
+  .dec .d-body{font-size:12.5px;line-height:1.55;color:var(--ink);}
+  .dec .cap{grid-column:2;grid-row:1;justify-self:end;margin-top:2px;}
+  .dec.cut{border-left-color:var(--accent);}
+  @media(max-width:600px){.dec{grid-template-columns:1fr;} .dec .cap{grid-column:1;grid-row:auto;justify-self:start;}}
+
+  .closer{background:linear-gradient(135deg,var(--tint-1) 0%,var(--tint-2) 100%);border:2px solid var(--shell);border-radius:10px;padding:24px 28px;text-align:center;margin-top:30px;}
+  .closer p{font-size:13.5px;line-height:1.7;max-width:640px;margin:0 auto;}
+  .closer .big{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--shell);margin-bottom:10px;}
+  .footer{text-align:center;margin-top:40px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="kicker">Decision Timeline</div>
+    <h1>Every Turn, and Who Caught It</h1>
+    <p class="sub">The Session 1 chat's decisions in order, each tagged by what actually recorded it. Three snapshots survived; the rest lived only in the transcript until git took over. This is all three sources on one spine.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="legend">
+    <span><span class="cap snap">snapshot</span> a saved file captured this</span>
+    <span><span class="cap chat">transcript only</span> known only from the chat</span>
+    <span><span class="cap git">in git</span> Session 2, fully tracked</span>
+  </div>
+
+  <!-- ERA 1 -->
+  <div class="era">The One-Pager</div>
+  <div class="ckpt">
+    <span class="c-v">v1</span><span class="c-name">"AI Fluency &amp; Organizational Readiness"</span>
+    <span class="c-desc">A static, cream, single-column bio timeline built as a leave-behind for one 1:1 with Honcho. No phases, no interactivity. The container everything else outgrew.</span>
+  </div>
+
+  <!-- ERA 2 -->
+  <div class="era">The Progression Is Born</div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Structural</div><div class="d-title">Pivot: static one-pager &rarr; interactive hub</div><div class="d-body">Set the one-pager aside for a clickable phase tracker, built for a colleague returning from leave first, then Honcho. The timeline was more versatile as a shared vehicle than a single leave-behind.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Structural</div><div class="d-title">A "Domino's-tracker" navigator, 8 phases to start</div><div class="d-body">Horizontal segmented tracker, click a phase to load its detail. Began at eight &mdash; "start big and dwindle."</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Content</div><div class="d-title">All 8 phases seeded, then given real titles</div><div class="d-body">Stubs filled with real material; the supplied title slate gave the arc its inward-to-outward shape (the community-vs-push split at 06/07).</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Content</div><div class="d-title">Thesis given a two-part lineage (Phase 02 &rarr; 07)</div><div class="d-body">First <em>felt</em> in Phase 02 (the geopolitics what-ifs &mdash; "this is like writing my own little story"), then <em>proven</em> in Phase 07. Arrive at the idea, don't get told it.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Content / Structural</div><div class="d-title">Front-End Breakthrough demoted to a component</div><div class="d-body">Corrected from its own Phase 03 to a smaller, earlier realization (HTML generating in-chat), moved into Phase 02. Phase 03 left an open slot; "I wonder" planted in Phase 04.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Tone/Register</div><div class="d-title">Phase 02 reframed "personal first"</div><div class="d-body">Depth comes from caring about the domain, not professional pressure. Professional use grew out of personal practice, not the reverse.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="ckpt">
+    <span class="c-v">v2</span><span class="c-name">"The Progression"</span>
+    <span class="c-desc">Warm palette. Bento grid already in, breakthrough componentized, Phase 03 open &mdash; but still "Things I Built" and "Work Tie-Ins," no teal, no summary panel. A mid-build save.</span>
+  </div>
+
+  <!-- ERA 3 -->
+  <div class="era">The Reframe &amp; the Rejected Prototypes</div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Tone/Register</div><div class="d-title">Full reframe: memoir &rarr; case study</div><div class="d-body">Every phase rewritten to lead with a transferable lesson, personal specifics demoted. The story is the evidence, not the point.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec cut"><div class="d-main"><div class="d-tag">Cut</div><div class="d-title">Puzzle-piece grid &mdash; built, then rejected</div><div class="d-body">A 4&times;2 interactive puzzle navigator, discarded for the tracker. A puzzle implies peer, non-sequential pieces; the argument is exponential <em>progression</em>. Never saved to its own file.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec cut"><div class="d-main"><div class="d-tag">Cut</div><div class="d-title">Accordion bar &mdash; built, then rejected</div><div class="d-body">Option B (expand-in-place) mocked against Option A (navigator + separate card). A won: the accordion crushed 7 of 8 segments to slivers, killing the "one journey" read.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Structural / Visual</div><div class="d-title">Summary panel added above the tracker</div><div class="d-body">Teal gradient, dark stroke, a mini-tracker, directional slide on phase change &mdash; a stable home for the active phase without cluttering the bar.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Structural / Naming</div><div class="d-title">O&amp;E merged, then split into two columns</div><div class="d-body">"What This Phase Comprised" + "What I Observed" merged into "Observations &amp; Experience," then split internally into "What Happened" / "Takeaways."</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Naming</div><div class="d-title">Two renames: "Things I Built" &rarr; "Relevant Builds"; "From My Own Story" &rarr; "Entering This Phase:"</div><div class="d-body">Builds framed as evidence, not portfolio; the opening block reframed as something anyone can use (name flagged unresolved).</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec cut"><div class="d-main"><div class="d-tag">Cut</div><div class="d-title">"Work Tie-Ins" block removed</div><div class="d-body">Present since the first hub draft; cut once the bento pass made it redundant. Data left unrendered.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Content</div><div class="d-title">Phase 01 "win / prove it" takeaway added</div><div class="d-body">The only thing that moves someone out of this phase is a real, lived win &mdash; a launch point, not an end point.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Visual</div><div class="d-title">Warm/cream palette &rarr; unified teal system</div><div class="d-body">Background settled at #FCFCFC, body type at Merriweather, one teal system across the page. Cohesion over the old two-palette look.</div></div><span class="cap chat">transcript only</span></div>
+
+  <div class="ckpt">
+    <span class="c-v">v14</span><span class="c-name">"The Progression" &mdash; repo start</span>
+    <span class="c-desc">Teal, Relevant Builds, O&amp;E split, Entering This Phase, full summary panel, Work Tie-Ins gone. The master-prompt handoff state &mdash; and the exact file that became Session 2's commit #1.</span>
+  </div>
+
+  <!-- ERA 4 -->
+  <div class="era">Claude Code &mdash; Session 2</div>
+
+  <div class="dec"><div class="d-main"><div class="d-tag">Everything after v14</div><div class="d-title">64 tracked versions &rarr; "The AI Arc"</div><div class="d-body">Eight phases collapsed to six, the thesis moved to the end and rewritten, an app suite with themed modals, a Phase 06 template of its own, the desktop layout cleanup. Every step here is exact &mdash; see the tracked-changes report and the origin report.</div></div><span class="cap git">in git</span></div>
+
+  <div class="closer">
+    <div class="big">Why it takes three sources</div>
+    <p>No single record holds the whole build. The snapshots caught three still frames. The transcript caught the reasoning between them &mdash; including two prototypes that were built and thrown away without ever being saved. Git caught the last 64 moves exactly. Lined up on one spine, they show the truth the finished page only implies: almost none of it was decided once.</p>
+  </div>
+
+  <div class="footer">Snapshots + transcript + git &middot; The AI Arc &middot; 2026</div>
+</div>
+</body>
+</html>
